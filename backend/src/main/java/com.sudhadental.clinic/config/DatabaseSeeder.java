@@ -25,10 +25,19 @@ public class DatabaseSeeder implements CommandLineRunner {
     private final TreatmentRecordRepository treatmentRecordRepository;
     private final InvoiceRepository invoiceRepository;
     private final PrescriptionRepository prescriptionRepository;
+    private final org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
 
     @Override
     public void run(String... args) throws Exception {
         log.info("DatabaseSeeder starting...");
+
+        // Clean up obsolete database schema columns if they exist from legacy schema versions
+        try {
+            jdbcTemplate.execute("ALTER TABLE treatment_records DROP COLUMN IF EXISTS date");
+            log.info("Legacy schema migration clean up: dropped column 'date' from 'treatment_records'.");
+        } catch (Exception e) {
+            log.warn("Legacy schema migration skipped: {}", e.getMessage());
+        }
 
         // 1. Seed Users
         if (userRepository.count() == 0 || !userRepository.findByUsername("admin").map(User::getFullName).orElse("").contains("Mariyappan")) {
