@@ -48,7 +48,7 @@ Create a PostgreSQL database named `sudhadentaldb`. The Spring Boot app is confi
 cd backend
 mvn spring-boot:run
 ```
-The server will start listening on [http://localhost:8080](http://localhost:8080).
+The server will start listening on [http://localhost:8081](http://localhost:8081).
 
 ### 3. Run Frontend App
 ```bash
@@ -56,6 +56,6 @@ cd frontend
 npm install
 npm run dev
 ```
-Open [http://localhost:5173](http://localhost:5173) in your browser.
+Open [http://localhost:5174](http://localhost:5174) in your browser.
 
 *Note: The React frontend includes a simulated Mock Mode that falls back to LocalStorage if the backend server is offline, making it immediately testable by itself!*

@@ -1,6 +1,6 @@
 import { CLINIC_CONFIG } from './config';
 
-const BASE_URL = 'http://localhost:8080/api';
+const BASE_URL = 'http://localhost:8081/api';
 
 // LocalStorage mock state keys
 const KEYS = {
