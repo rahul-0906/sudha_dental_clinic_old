@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../api';
-import { BookOpen, User, Plus, Trash2, CheckCircle } from 'lucide-react';
+import { BookOpen, User, Plus, Trash2, CheckCircle, ShieldAlert } from 'lucide-react';
 
 const STANDARD_PROCEDURES = [
   { name: 'Filling', defaultCost: 1500 },
@@ -15,9 +15,10 @@ export default function EMRView({ userRole }) {
   const [selectedPatientId, setSelectedPatientId] = useState('');
   const [chiefComplaint, setChiefComplaint] = useState('');
   const [diagnosis, setDiagnosis] = useState('');
-  const [procedureCompleted, setProcedureCompleted] = useState(STANDARD_PROCEDURES[0].name);
-  const [cost, setCost] = useState(STANDARD_PROCEDURES[0].defaultCost);
-  const [paidAmount, setPaidAmount] = useState(STANDARD_PROCEDURES[0].defaultCost);
+  const [procedureCompleted, setProcedureCompleted] = useState('');
+  const [cost, setCost] = useState(0);
+  const [paidAmount, setPaidAmount] = useState(0);
+  const [procedureOptions, setProcedureOptions] = useState([]);
   
   // Prescription List
   const [prescriptions, setPrescriptions] = useState([]);
@@ -27,16 +28,40 @@ export default function EMRView({ userRole }) {
   const [successMsg, setSuccessMsg] = useState('');
 
   useEffect(() => {
-    const loadPatients = async () => {
+    const loadData = async () => {
       try {
         const list = await api.patients.list();
         setPatients(list);
         if (list.length > 0) setSelectedPatientId(list[0].id.toString());
       } catch (err) {
-        console.error(err);
+        console.error("Failed to load patients", err);
+      }
+
+      try {
+        const mappingList = await api.mappings.list();
+        const mappedNames = Array.from(new Set(mappingList.map(m => m.procedureName)));
+        const allNames = Array.from(new Set([...mappedNames, ...STANDARD_PROCEDURES.map(p => p.name)]));
+        setProcedureOptions(allNames);
+        if (allNames.length > 0) {
+          const firstProc = allNames[0];
+          setProcedureCompleted(firstProc);
+          const standard = STANDARD_PROCEDURES.find(p => p.name === firstProc);
+          setCost(standard ? standard.defaultCost : 1500);
+          setPaidAmount(standard ? standard.defaultCost : 1500);
+        }
+      } catch (err) {
+        console.error("Failed to load mappings", err);
+        const fallbackNames = STANDARD_PROCEDURES.map(p => p.name);
+        setProcedureOptions(fallbackNames);
+        if (fallbackNames.length > 0) {
+          setProcedureCompleted(fallbackNames[0]);
+          const standard = STANDARD_PROCEDURES.find(p => p.name === fallbackNames[0]);
+          setCost(standard ? standard.defaultCost : 1500);
+          setPaidAmount(standard ? standard.defaultCost : 1500);
+        }
       }
     };
-    loadPatients();
+    loadData();
   }, []);
 
   const handleProcedureChange = (e) => {
@@ -47,8 +72,8 @@ export default function EMRView({ userRole }) {
       setCost(standard.defaultCost);
       setPaidAmount(standard.defaultCost);
     } else {
-      setCost(0);
-      setPaidAmount(0);
+      setCost(1500);
+      setPaidAmount(1500);
     }
   };
 
@@ -88,9 +113,13 @@ export default function EMRView({ userRole }) {
       setChiefComplaint('');
       setDiagnosis('');
       setPrescriptions([]);
-      setProcedureCompleted(STANDARD_PROCEDURES[0].name);
-      setCost(STANDARD_PROCEDURES[0].defaultCost);
-      setPaidAmount(STANDARD_PROCEDURES[0].defaultCost);
+      if (procedureOptions.length > 0) {
+        const firstProc = procedureOptions[0];
+        setProcedureCompleted(firstProc);
+        const standard = STANDARD_PROCEDURES.find(p => p.name === firstProc);
+        setCost(standard ? standard.defaultCost : 1500);
+        setPaidAmount(standard ? standard.defaultCost : 1500);
+      }
 
       setTimeout(() => setSuccessMsg(''), 5000);
     } catch (err) {
@@ -160,8 +189,8 @@ export default function EMRView({ userRole }) {
                 onChange={handleProcedureChange}
                 className="w-full px-3.5 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm bg-white"
               >
-                {STANDARD_PROCEDURES.map(proc => (
-                  <option key={proc.name} value={proc.name}>{proc.name}</option>
+                {procedureOptions.map(procName => (
+                  <option key={procName} value={procName}>{procName}</option>
                 ))}
               </select>
             </div>

@@ -20,6 +20,7 @@ public class TreatmentService {
     private final TreatmentRecordRepository treatmentRecordRepository;
     private final PrescriptionRepository prescriptionRepository;
     private final InventoryRepository inventoryRepository;
+    private final TreatmentMaterialMappingRepository treatmentMaterialMappingRepository;
     private final CashLedgerRepository cashLedgerRepository;
     private final InvoiceRepository invoiceRepository;
     private final PatientRepository patientRepository;
@@ -43,7 +44,6 @@ public class TreatmentService {
                 .diagnosis(request.getDiagnosis())
                 .procedureCompleted(request.getProcedureCompleted())
                 .cost(request.getCost())
-                .date(LocalDateTime.now())
                 .build();
 
         record = treatmentRecordRepository.save(record);
@@ -64,7 +64,7 @@ public class TreatmentService {
             log.info("Saved {} prescriptions linked to treatment record ID: {}", request.getPrescriptions().size(), record.getId());
         }
 
-        // 3. Auto-Deduct Inventory Materials based on Procedure type
+        // 3. Dynamic Auto-Deduct Inventory Materials based on mapped database rules
         deductMaterialsForProcedure(request.getProcedureCompleted());
 
         // 4. Create Invoice
@@ -81,21 +81,19 @@ public class TreatmentService {
                 .totalAmount(request.getCost())
                 .paidAmount(paid)
                 .status(invoiceStatus)
-                .billingDate(LocalDateTime.now())
                 .build();
         invoiceRepository.save(invoice);
         log.info("Invoice generated and saved. Total: {}, Paid: {}, Status: {}", request.getCost(), paid, invoiceStatus);
 
-        // 5. Update Cash Ledger if payment is received
+        // 5. Update Cash Ledger if payment is received using Strict Double Entry (Debit increases cash)
         if (paid > 0.0) {
             CashLedger ledgerEntry = CashLedger.builder()
-                    .type(LedgerType.INFLOW)
-                    .amount(paid)
+                    .debit(paid)      // Cash inflow
+                    .credit(0.0)     // No cash outflow
                     .description("Payment received for treatment record ID: " + record.getId() + " (" + request.getProcedureCompleted() + ")")
-                    .date(LocalDateTime.now())
                     .build();
             cashLedgerRepository.save(ledgerEntry);
-            log.info("Cash ledger updated with Inflow: {}", paid);
+            log.info("Cash ledger updated with Inflow (Debit): {}", paid);
         }
 
         return record;
@@ -104,51 +102,32 @@ public class TreatmentService {
     private void deductMaterialsForProcedure(String procedure) {
         if (procedure == null) return;
         
-        String cleanProc = procedure.trim().toLowerCase();
-        log.info("Executing auto-deduction of inventory for procedure: {}", procedure);
-
-        switch (cleanProc) {
-            case "filling":
-                deductStock("Composite Resin", 1);
-                deductStock("Syringe Needle", 1);
-                break;
-            case "root canal":
-                deductStock("Gutta Percha Points", 2);
-                deductStock("Dental Anesthetic", 1);
-                break;
-            case "extraction":
-                deductStock("Dental Anesthetic", 1);
-                deductStock("Suture Thread", 2);
-                break;
-            case "teeth cleaning":
-            case "cleaning":
-                deductStock("Prophy Paste", 1);
-                deductStock("Saliva Ejector", 1);
-                break;
-            default:
-                log.info("No standard inventory deduction rules defined for procedure: {}. Skipping auto-deduction.", procedure);
-                break;
+        log.info("Executing dynamic database-driven material auto-deductions for procedure: {}", procedure);
+        
+        // Query the mappings table dynamically for this specific procedure
+        List<TreatmentMaterialMapping> mappings = treatmentMaterialMappingRepository.findByProcedureNameIgnoreCase(procedure.trim());
+        
+        if (mappings.isEmpty()) {
+            log.info("No database mapping rules found for procedure: '{}'. Skipping stock auto-deduction.", procedure);
+            return;
         }
-    }
 
-    private void deductStock(String materialName, int amount) {
-        Optional<Inventory> optionalInventory = inventoryRepository.findByMaterialNameIgnoreCase(materialName);
-        if (optionalInventory.isPresent()) {
-            Inventory item = optionalInventory.get();
+        for (TreatmentMaterialMapping mapping : mappings) {
+            Inventory item = mapping.getInventoryItem();
+            int deductQty = mapping.getQuantityRequired();
+            
             int currentQty = item.getQuantity();
-            int newQty = Math.max(0, currentQty - amount);
+            int newQty = Math.max(0, currentQty - deductQty);
             item.setQuantity(newQty);
             inventoryRepository.save(item);
             
-            log.info("Deducted {} {} of {}. Previous stock: {}, New stock: {}", 
-                     amount, item.getUnit(), item.getMaterialName(), currentQty, newQty);
+            log.info("Deducted {} {} of '{}' dynamically based on procedure mapping. Previous: {}, New: {}", 
+                     deductQty, item.getUnit(), item.getMaterialName(), currentQty, newQty);
             
             if (newQty < item.getLowStockThreshold()) {
-                log.warn("WARNING: Stock level of '{}' has fallen below the threshold ({} < {}). Alert triggered.", 
+                log.warn("WARNING: Dynamic stock auto-deduction triggered a critical depletion on '{}' ({} < {}).", 
                          item.getMaterialName(), newQty, item.getLowStockThreshold());
             }
-        } else {
-            log.warn("Material '{}' was not found in inventory. Cannot auto-deduct stock.", materialName);
         }
     }
 }

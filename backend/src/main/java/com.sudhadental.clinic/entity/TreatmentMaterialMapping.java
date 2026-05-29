@@ -10,31 +10,26 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "patients")
+@Table(name = "treatment_material_mappings")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @EntityListeners(AuditingEntityListener.class)
-public class Patient {
+public class TreatmentMaterialMapping {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private String procedureName; // e.g., "Filling", "Root Canal", "Extraction"
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "inventory_id", nullable = false)
+    private Inventory inventoryItem;
 
     @Column(nullable = false)
-    private String phone;
-
-    private String email;
-
-    private Integer age;
-
-    private String gender;
-
-    @Column(columnDefinition = "TEXT")
-    private String medicalHistory;
+    private Integer quantityRequired;
 
     // Auditing columns
     @CreatedBy

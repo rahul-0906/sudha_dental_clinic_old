@@ -2,6 +2,11 @@ package com.sudhadental.clinic.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 
 @Entity
@@ -10,6 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EntityListeners(AuditingEntityListener.class)
 public class Invoice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,16 +35,18 @@ public class Invoice {
     @Column(nullable = false)
     private InvoiceStatus status;
 
-    @Column(nullable = false)
-    private LocalDateTime billingDate;
+    // Auditing columns
+    @CreatedBy
+    @Column(updatable = false)
+    private String createdBy;
 
-    @PrePersist
-    protected void onCreate() {
-        if (billingDate == null) {
-            billingDate = LocalDateTime.now();
-        }
-        if (paidAmount == null) {
-            paidAmount = 0.0;
-        }
-    }
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDateTime createdDate;
+
+    @LastModifiedBy
+    private String lastModifiedBy;
+
+    @LastModifiedDate
+    private LocalDateTime lastModifiedDate;
 }

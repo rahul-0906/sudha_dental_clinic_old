@@ -2,7 +2,10 @@ import { CLINIC_CONFIG } from './config';
 
 const BASE_URL = 'http://localhost:8081/api';
 
-// LocalStorage mock state keys
+// Check if we are running in development mode
+const IS_DEV = import.meta.env.MODE === 'development';
+
+// LocalStorage mock state keys (Development Only)
 const KEYS = {
   PATIENTS: 'sudha_patients',
   APPOINTMENTS: 'sudha_appointments',
@@ -10,10 +13,13 @@ const KEYS = {
   INVOICES: 'sudha_invoices',
   LEDGER: 'sudha_ledger',
   TREATMENTS: 'sudha_treatments',
+  MAPPINGS: 'sudha_mappings',
 };
 
-// Seed mock data if localStorage is empty
+// Seed mock data if localStorage is empty (Development Only)
 const seedMockData = () => {
+  if (!IS_DEV) return; // Completely skipped in production
+
   if (!localStorage.getItem(KEYS.PATIENTS)) {
     localStorage.setItem(KEYS.PATIENTS, JSON.stringify([
       { id: 1, name: 'John Doe', phone: '9876543210', email: 'john.doe@example.com', age: 35, gender: 'Male', medicalHistory: 'Hypertension' },
@@ -25,12 +31,25 @@ const seedMockData = () => {
   if (!localStorage.getItem(KEYS.INVENTORY)) {
     localStorage.setItem(KEYS.INVENTORY, JSON.stringify([
       { id: 1, materialName: 'Composite Resin', quantity: 15, lowStockThreshold: 5, unit: 'tubes' },
-      { id: 2, materialName: 'Dental Anesthetic', quantity: 8, lowStockThreshold: 10, unit: 'cartridges' }, // low stock
+      { id: 2, materialName: 'Dental Anesthetic', quantity: 8, lowStockThreshold: 10, unit: 'cartridges' },
       { id: 3, materialName: 'Syringe Needle', quantity: 45, lowStockThreshold: 15, unit: 'pcs' },
       { id: 4, materialName: 'Gutta Percha Points', quantity: 30, lowStockThreshold: 10, unit: 'pcs' },
-      { id: 5, materialName: 'Suture Thread', quantity: 4, lowStockThreshold: 5, unit: 'pcs' }, // low stock
+      { id: 5, materialName: 'Suture Thread', quantity: 4, lowStockThreshold: 5, unit: 'pcs' },
       { id: 6, materialName: 'Prophy Paste', quantity: 12, lowStockThreshold: 4, unit: 'tubes' },
       { id: 7, materialName: 'Saliva Ejector', quantity: 50, lowStockThreshold: 15, unit: 'pcs' }
+    ]));
+  }
+
+  if (!localStorage.getItem(KEYS.MAPPINGS)) {
+    localStorage.setItem(KEYS.MAPPINGS, JSON.stringify([
+      { id: 1, procedureName: 'Filling', inventoryItem: { id: 1, materialName: 'Composite Resin', unit: 'tubes' }, quantityRequired: 1 },
+      { id: 2, procedureName: 'Filling', inventoryItem: { id: 3, materialName: 'Syringe Needle', unit: 'pcs' }, quantityRequired: 1 },
+      { id: 3, procedureName: 'Root Canal', inventoryItem: { id: 4, materialName: 'Gutta Percha Points', unit: 'pcs' }, quantityRequired: 2 },
+      { id: 4, procedureName: 'Root Canal', inventoryItem: { id: 2, materialName: 'Dental Anesthetic', unit: 'cartridges' }, quantityRequired: 1 },
+      { id: 5, procedureName: 'Extraction', inventoryItem: { id: 2, materialName: 'Dental Anesthetic', unit: 'cartridges' }, quantityRequired: 1 },
+      { id: 6, procedureName: 'Extraction', inventoryItem: { id: 5, materialName: 'Suture Thread', unit: 'pcs' }, quantityRequired: 2 },
+      { id: 7, procedureName: 'Teeth Cleaning', inventoryItem: { id: 6, materialName: 'Prophy Paste', unit: 'tubes' }, quantityRequired: 1 },
+      { id: 8, procedureName: 'Teeth Cleaning', inventoryItem: { id: 7, materialName: 'Saliva Ejector', unit: 'pcs' }, quantityRequired: 1 }
     ]));
   }
 
@@ -72,8 +91,8 @@ const seedMockData = () => {
 
   if (!localStorage.getItem(KEYS.LEDGER)) {
     localStorage.setItem(KEYS.LEDGER, JSON.stringify([
-      { id: 1, type: 'OUTFLOW', amount: 250, description: 'Office supplies & cleaning kits purchase', date: new Date(Date.now() - 86400000).toISOString() },
-      { id: 2, type: 'INFLOW', amount: 500, description: 'Consultation fees', date: new Date(Date.now() - 86400000).toISOString() }
+      { id: 1, debit: 0.0, credit: 250.0, description: 'Office supplies & cleaning kits purchase', createdBy: 'System', createdDate: new Date(Date.now() - 86400000).toISOString() },
+      { id: 2, debit: 500.0, credit: 0.0, description: 'Opening balance / Consultation fees', createdBy: 'System', createdDate: new Date(Date.now() - 86400000).toISOString() }
     ]));
   }
 
@@ -97,21 +116,30 @@ const seedMockData = () => {
 
 seedMockData();
 
-// Helper to determine if we use API or mock fallback
+// Helper to determine if we use API or local mock fallback
 let useMock = false;
 
 async function request(endpoint, options = {}) {
-  if (useMock) {
-    return mockRequest(endpoint, options);
+  // Read current context from Session for HTTP header auditing
+  const defaultUser = '{"username":"admin", "role":"ADMIN"}';
+  const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || defaultUser);
+
+  const headers = {
+    'Content-Type': 'application/json',
+    'X-User-Name': currentUser.username,
+    'X-Role': currentUser.role,
+    ...options.headers,
+  };
+
+  // Skip actual HTTP request if mocks are enabled (Development Only)
+  if (IS_DEV && useMock) {
+    return mockRequest(endpoint, { ...options, headers });
   }
 
   try {
     const res = await fetch(`${BASE_URL}${endpoint}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
       ...options,
+      headers,
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
@@ -119,16 +147,23 @@ async function request(endpoint, options = {}) {
     }
     return await res.json();
   } catch (error) {
-    console.warn(`API connection to ${BASE_URL} failed, falling back to local simulation:`, error.message);
-    useMock = true; // Switch to mock mode automatically
-    return mockRequest(endpoint, options);
+    if (IS_DEV) {
+      console.warn(`API connection to ${BASE_URL} failed, falling back to LocalStorage simulation:`, error.message);
+      useMock = true; // Switch to mock mode dynamically
+      return mockRequest(endpoint, { ...options, headers });
+    }
+    // In production, mock fallback is stripped. Propagate error.
+    throw error;
   }
 }
 
-// Local mock processor
+// Local mock processor (Development Only)
 function mockRequest(endpoint, options = {}) {
+  if (!IS_DEV) return Promise.reject(new Error('Mocks disabled in production'));
+
   const method = options.method || 'GET';
   const body = options.body ? JSON.parse(options.body) : null;
+  const username = options.headers['X-User-Name'] || 'System';
 
   if (endpoint.startsWith('/patients')) {
     let list = JSON.parse(localStorage.getItem(KEYS.PATIENTS));
@@ -136,7 +171,12 @@ function mockRequest(endpoint, options = {}) {
       return Promise.resolve(list);
     }
     if (method === 'POST') {
-      const newPatient = { ...body, id: Date.now(), registeredAt: new Date().toISOString() };
+      const newPatient = { 
+        ...body, 
+        id: Date.now(), 
+        createdBy: username, 
+        createdDate: new Date().toISOString() 
+      };
       list.push(newPatient);
       localStorage.setItem(KEYS.PATIENTS, JSON.stringify(list));
       return Promise.resolve(newPatient);
@@ -167,7 +207,9 @@ function mockRequest(endpoint, options = {}) {
         appointmentTime: body.appointmentTime,
         status: 'PENDING',
         chiefComplaint: body.chiefComplaint || '',
-        whatsappReminderSent: false
+        whatsappReminderSent: false,
+        createdBy: username,
+        createdDate: new Date().toISOString()
       };
       
       list.push(newApp);
@@ -180,6 +222,8 @@ function mockRequest(endpoint, options = {}) {
       const app = list.find(a => a.id === id);
       if (app) {
         app.status = body.status;
+        app.lastModifiedBy = username;
+        app.lastModifiedDate = new Date().toISOString();
         localStorage.setItem(KEYS.APPOINTMENTS, JSON.stringify(list));
       }
       return Promise.resolve(app);
@@ -190,8 +234,9 @@ function mockRequest(endpoint, options = {}) {
       const app = list.find(a => a.id === id);
       if (app) {
         app.whatsappReminderSent = true;
+        app.lastModifiedBy = username;
+        app.lastModifiedDate = new Date().toISOString();
         localStorage.setItem(KEYS.APPOINTMENTS, JSON.stringify(list));
-        console.log(`[MOCK WHATSAPP] Notification dispatched to ${app.patient.phone} for ${app.patient.name}`);
       }
       return Promise.resolve({ message: 'WhatsApp reminder sent successfully (Mocked)' });
     }
@@ -210,6 +255,8 @@ function mockRequest(endpoint, options = {}) {
       const item = list.find(i => i.id === id);
       if (item) {
         item.quantity += body.quantity;
+        item.lastModifiedBy = username;
+        item.lastModifiedDate = new Date().toISOString();
         localStorage.setItem(KEYS.INVENTORY, JSON.stringify(list));
       }
       return Promise.resolve(item);
@@ -218,10 +265,45 @@ function mockRequest(endpoint, options = {}) {
       const id = Number(endpoint.split('/')[2]);
       const itemIndex = list.findIndex(i => i.id === id);
       if (itemIndex > -1) {
-        list[itemIndex] = { ...body, id };
+        list[itemIndex] = { 
+          ...body, 
+          id, 
+          lastModifiedBy: username, 
+          lastModifiedDate: new Date().toISOString() 
+        };
         localStorage.setItem(KEYS.INVENTORY, JSON.stringify(list));
         return Promise.resolve(list[itemIndex]);
       }
+    }
+  }
+
+  if (endpoint.startsWith('/mappings')) {
+    let list = JSON.parse(localStorage.getItem(KEYS.MAPPINGS) || '[]');
+    if (method === 'GET') {
+      return Promise.resolve(list);
+    }
+    if (method === 'POST') {
+      const materials = JSON.parse(localStorage.getItem(KEYS.INVENTORY));
+      const mat = materials.find(m => m.id === Number(body.inventoryId));
+      
+      const newMapping = {
+        id: Date.now(),
+        procedureName: body.procedureName,
+        inventoryItem: mat || { id: body.inventoryId, materialName: 'Consumable ' + body.inventoryId, unit: 'pcs' },
+        quantityRequired: body.quantityRequired,
+        createdBy: username,
+        createdDate: new Date().toISOString()
+      };
+      
+      list.push(newMapping);
+      localStorage.setItem(KEYS.MAPPINGS, JSON.stringify(list));
+      return Promise.resolve(newMapping);
+    }
+    if (method === 'DELETE') {
+      const id = Number(endpoint.split('/')[2]);
+      list = list.filter(m => m.id !== id);
+      localStorage.setItem(KEYS.MAPPINGS, JSON.stringify(list));
+      return Promise.resolve({ success: true });
     }
   }
 
@@ -236,8 +318,8 @@ function mockRequest(endpoint, options = {}) {
     }
     if (endpoint.includes('/summary') && method === 'GET') {
       const list = JSON.parse(localStorage.getItem(KEYS.LEDGER));
-      const totalInflow = list.filter(e => e.type === 'INFLOW').reduce((sum, e) => sum + e.amount, 0);
-      const totalOutflow = list.filter(e => e.type === 'OUTFLOW').reduce((sum, e) => sum + e.amount, 0);
+      const totalInflow = list.reduce((sum, e) => sum + e.debit, 0);
+      const totalOutflow = list.reduce((sum, e) => sum + e.credit, 0);
       return Promise.resolve({
         totalInflow,
         totalOutflow,
@@ -246,7 +328,14 @@ function mockRequest(endpoint, options = {}) {
     }
     if (endpoint.includes('/ledger') && method === 'POST') {
       let list = JSON.parse(localStorage.getItem(KEYS.LEDGER));
-      const entry = { ...body, id: Date.now(), date: new Date().toISOString() };
+      const entry = { 
+        id: Date.now(), 
+        debit: body.type === 'INFLOW' ? body.amount : 0.0,
+        credit: body.type === 'OUTFLOW' ? body.amount : 0.0,
+        description: body.description,
+        createdBy: username, 
+        createdDate: new Date().toISOString() 
+      };
       list.push(entry);
       localStorage.setItem(KEYS.LEDGER, JSON.stringify(list));
       return Promise.resolve(entry);
@@ -264,15 +353,18 @@ function mockRequest(endpoint, options = {}) {
         } else {
           inv.status = 'PARTIALLY_PAID';
         }
+        inv.lastModifiedBy = username;
+        inv.lastModifiedDate = new Date().toISOString();
         localStorage.setItem(KEYS.INVOICES, JSON.stringify(invoices));
 
-        // update ledger
+        // update double entry ledger
         const ledgerEntry = {
           id: Date.now(),
-          type: 'INFLOW',
-          amount: body.amount,
+          debit: body.amount,
+          credit: 0.0,
           description: `Invoice payment received for Invoice ID: ${inv.id}`,
-          date: new Date().toISOString()
+          createdBy: username,
+          createdDate: new Date().toISOString()
         };
         ledgers.push(ledgerEntry);
         localStorage.setItem(KEYS.LEDGER, JSON.stringify(ledgers));
@@ -300,34 +392,25 @@ function mockRequest(endpoint, options = {}) {
         diagnosis: body.diagnosis,
         procedureCompleted: body.procedureCompleted,
         cost: body.cost,
-        date: new Date().toISOString()
+        createdBy: username,
+        createdDate: new Date().toISOString()
       };
       list.push(newRecord);
       localStorage.setItem(KEYS.TREATMENTS, JSON.stringify(list));
 
-      // Auto deduct materials rules
+      // Auto deduct materials dynamically based on seeded mock mappings
+      let mappings = JSON.parse(localStorage.getItem(KEYS.MAPPINGS) || '[]');
       let materials = JSON.parse(localStorage.getItem(KEYS.INVENTORY));
-      const deduct = (name, qty) => {
-        const item = materials.find(m => m.materialName.toLowerCase() === name.toLowerCase());
-        if (item) {
-          item.quantity = Math.max(0, item.quantity - qty);
-        }
-      };
       
-      const proc = body.procedureCompleted.trim().toLowerCase();
-      if (proc === 'filling') {
-        deduct('Composite Resin', 1);
-        deduct('Syringe Needle', 1);
-      } else if (proc === 'root canal') {
-        deduct('Gutta Percha Points', 2);
-        deduct('Dental Anesthetic', 1);
-      } else if (proc === 'extraction') {
-        deduct('Dental Anesthetic', 1);
-        deduct('Suture Thread', 2);
-      } else if (proc === 'teeth cleaning' || proc === 'cleaning') {
-        deduct('Prophy Paste', 1);
-        deduct('Saliva Ejector', 1);
-      }
+      const relevantMappings = mappings.filter(m => m.procedureName.toLowerCase() === body.procedureCompleted.trim().toLowerCase());
+      relevantMappings.forEach(mapping => {
+        const item = materials.find(m => m.id === mapping.inventoryItem.id);
+        if (item) {
+          item.quantity = Math.max(0, item.quantity - mapping.quantityRequired);
+          item.lastModifiedBy = username;
+          item.lastModifiedDate = new Date().toISOString();
+        }
+      });
       localStorage.setItem(KEYS.INVENTORY, JSON.stringify(materials));
 
       // Generate invoice
@@ -343,20 +426,22 @@ function mockRequest(endpoint, options = {}) {
         totalAmount: body.cost,
         paidAmount: paid,
         status,
-        billingDate: new Date().toISOString()
+        createdBy: username,
+        createdDate: new Date().toISOString()
       };
       invoices.push(newInv);
       localStorage.setItem(KEYS.INVOICES, JSON.stringify(invoices));
 
-      // Add to ledger
+      // Add to double entry ledger
       if (paid > 0) {
         let ledgers = JSON.parse(localStorage.getItem(KEYS.LEDGER));
         ledgers.push({
           id: Date.now() + 1,
-          type: 'INFLOW',
-          amount: paid,
+          debit: paid,
+          credit: 0.0,
           description: `Payment received for treatment record (${body.procedureCompleted})`,
-          date: new Date().toISOString()
+          createdBy: username,
+          createdDate: new Date().toISOString()
         });
         localStorage.setItem(KEYS.LEDGER, JSON.stringify(ledgers));
       }
@@ -370,6 +455,9 @@ function mockRequest(endpoint, options = {}) {
 
 // Core API Wrapper methods
 export const api = {
+  theme: {
+    config: () => request('/theme/config'),
+  },
   patients: {
     list: (search = '') => request(`/patients${search ? `?search=${encodeURIComponent(search)}` : ''}`),
     create: (data) => request('/patients', { method: 'POST', body: JSON.stringify(data) }),
@@ -386,6 +474,11 @@ export const api = {
     alerts: () => request('/inventory/alerts'),
     addStock: (id, quantity) => request(`/inventory/${id}/stock`, { method: 'PATCH', body: JSON.stringify({ quantity }) }),
     updateThreshold: (id, data) => request(`/inventory/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  },
+  mappings: {
+    list: () => request('/mappings'),
+    create: (data) => request('/mappings', { method: 'POST', body: JSON.stringify(data) }),
+    delete: (id) => request(`/mappings/${id}`, { method: 'DELETE' }),
   },
   billing: {
     invoices: () => request('/billing/invoices'),

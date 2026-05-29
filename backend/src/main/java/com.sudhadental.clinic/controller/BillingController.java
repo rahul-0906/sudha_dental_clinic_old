@@ -3,13 +3,11 @@ package com.sudhadental.clinic.controller;
 import com.sudhadental.clinic.entity.CashLedger;
 import com.sudhadental.clinic.entity.Invoice;
 import com.sudhadental.clinic.entity.InvoiceStatus;
-import com.sudhadental.clinic.entity.LedgerType;
 import com.sudhadental.clinic.repository.CashLedgerRepository;
 import com.sudhadental.clinic.repository.InvoiceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -34,13 +32,13 @@ public class BillingController {
     @GetMapping("/summary")
     public ResponseEntity<?> getCashFlowSummary() {
         List<CashLedger> entries = cashLedgerRepository.findAll();
+        
+        // Dynamic summary of double-entry ledger book (Debit = Inflow, Credit = Outflow)
         double totalInflow = entries.stream()
-                .filter(e -> e.getType() == LedgerType.INFLOW)
-                .mapToDouble(CashLedger::getAmount)
+                .mapToDouble(CashLedger::getDebit)
                 .sum();
         double totalOutflow = entries.stream()
-                .filter(e -> e.getType() == LedgerType.OUTFLOW)
-                .mapToDouble(CashLedger::getAmount)
+                .mapToDouble(CashLedger::getCredit)
                 .sum();
 
         return ResponseEntity.ok(Map.of(
@@ -51,10 +49,17 @@ public class BillingController {
     }
 
     @PostMapping("/ledger")
-    public CashLedger addLedgerEntry(@RequestBody CashLedger entry) {
-        if (entry.getDate() == null) {
-            entry.setDate(LocalDateTime.now());
-        }
+    public CashLedger addLedgerEntry(@RequestBody Map<String, Object> payload) {
+        double amount = Double.parseDouble(payload.get("amount").toString());
+        String type = payload.get("type").toString(); // "INFLOW" or "OUTFLOW"
+        String desc = payload.get("description").toString();
+
+        CashLedger entry = CashLedger.builder()
+                .debit(type.equalsIgnoreCase("INFLOW") ? amount : 0.0)
+                .credit(type.equalsIgnoreCase("OUTFLOW") ? amount : 0.0)
+                .description(desc)
+                .build();
+                
         return cashLedgerRepository.save(entry);
     }
 
@@ -73,12 +78,11 @@ public class BillingController {
                     }
                     invoiceRepository.save(invoice);
 
-                    // Add inflow entry to general ledger
+                    // Add inflow entry to general ledger (Debit Cash increases cash balance)
                     CashLedger ledgerEntry = CashLedger.builder()
-                            .type(LedgerType.INFLOW)
-                            .amount(payment)
+                            .debit(payment)
+                            .credit(0.0)
                             .description("Invoice payment received for Invoice ID: " + invoice.getId())
-                            .date(LocalDateTime.now())
                             .build();
                     cashLedgerRepository.save(ledgerEntry);
 

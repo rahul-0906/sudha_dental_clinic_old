@@ -151,26 +151,32 @@ export default function BillingView({ userRole }) {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-slate-700">
-                  {ledger.map((entry) => (
-                    <tr key={entry.id}>
-                      <td className="px-4 py-3 text-slate-500">
-                        {new Date(entry.date).toLocaleDateString()}
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${
-                          entry.type === 'INFLOW' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'
+                  {ledger.map((entry) => {
+                    const isDebit = entry.debit > 0;
+                    const typeLabel = isDebit ? 'DEBIT (INFLOW)' : 'CREDIT (OUTFLOW)';
+                    const amount = isDebit ? entry.debit : entry.credit;
+                    const entryDate = entry.createdDate || entry.date || new Date().toISOString();
+                    return (
+                      <tr key={entry.id}>
+                        <td className="px-4 py-3 text-slate-500">
+                          {new Date(entryDate).toLocaleDateString()}
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${
+                            isDebit ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'
+                          }`}>
+                            {typeLabel}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-slate-600">{entry.description}</td>
+                        <td className={`px-4 py-3 text-right font-semibold ${
+                          isDebit ? 'text-emerald-700' : 'text-red-600'
                         }`}>
-                          {entry.type}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-slate-600">{entry.description}</td>
-                      <td className={`px-4 py-3 text-right font-semibold ${
-                        entry.type === 'INFLOW' ? 'text-emerald-700' : 'text-red-600'
-                      }`}>
-                        {entry.type === 'INFLOW' ? '+' : '-'}₹{entry.amount}
-                      </td>
-                    </tr>
-                  ))}
+                          {isDebit ? '+' : '-'}₹{amount}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

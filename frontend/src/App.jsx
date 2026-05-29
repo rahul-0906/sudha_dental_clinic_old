@@ -4,7 +4,8 @@ import DashboardView from './views/DashboardView';
 import EMRView from './views/EMRView';
 import InventoryView from './views/InventoryView';
 import BillingView from './views/BillingView';
-import { LayoutDashboard, BookOpen, Layers, CreditCard, Stethoscope, Users, Calendar, Plus } from 'lucide-react';
+import MappingView from './views/MappingView';
+import { LayoutDashboard, BookOpen, Layers, CreditCard, Stethoscope, Users, Calendar, Plus, Settings } from 'lucide-react';
 import { api } from './api';
 
 const ROLES = [
@@ -15,8 +16,25 @@ const ROLES = [
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [currentRole, setCurrentRole] = useState('ADMIN'); // Default to Admin for full demo preview
+  const [currentRole, setCurrentRole] = useState(() => {
+    const defaultUser = '{"username":"admin", "role":"ADMIN"}';
+    const current = JSON.parse(sessionStorage.getItem('currentUser') || defaultUser);
+    return current.role || 'ADMIN';
+  });
   const [patients, setPatients] = useState([]);
+
+  const handleRoleChange = (role) => {
+    setCurrentRole(role);
+    const username = role.toLowerCase() + '_user';
+    sessionStorage.setItem('currentUser', JSON.stringify({ username, role }));
+  };
+
+  useEffect(() => {
+    const defaultUser = '{"username":"admin", "role":"ADMIN"}';
+    if (!sessionStorage.getItem('currentUser')) {
+      sessionStorage.setItem('currentUser', defaultUser);
+    }
+  }, []);
   const [isApptModalOpen, setIsApptModalOpen] = useState(false);
   const [apptForm, setApptForm] = useState({
     patientId: '',
@@ -134,6 +152,20 @@ export default function App() {
             <CreditCard className="w-5 h-5" />
             <span>Cash Flow / Billing</span>
           </button>
+
+          {currentRole === 'ADMIN' && (
+            <button
+              onClick={() => setActiveTab('mappings')}
+              className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl transition-all text-sm font-semibold ${
+                activeTab === 'mappings'
+                  ? 'bg-primary-700 text-white shadow-md'
+                  : 'hover:bg-slate-800 hover:text-slate-100 text-slate-400'
+              }`}
+            >
+              <Settings className="w-5 h-5" />
+              <span>Procedure Mappings</span>
+            </button>
+          )}
         </nav>
 
         {/* Sidebar Footer Clinic Metadata */}
@@ -170,18 +202,20 @@ export default function App() {
             )}
 
             {/* Role selection dropdown to test 3-tier RBAC access levels */}
-            <div className="flex items-center space-x-2 border-l border-slate-200 pl-4">
-              <span className="text-xs font-semibold text-slate-400">Simulate Role:</span>
-              <select
-                value={currentRole}
-                onChange={(e) => setCurrentRole(e.target.value)}
-                className="px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-bold text-slate-700 bg-slate-50 focus:outline-none focus:ring-1 focus:ring-primary-500"
-              >
-                {ROLES.map(role => (
-                  <option key={role.id} value={role.id}>{role.label}</option>
-                ))}
-              </select>
-            </div>
+            {import.meta.env.MODE === 'development' && (
+              <div className="flex items-center space-x-2 border-l border-slate-200 pl-4">
+                <span className="text-xs font-semibold text-slate-400">Simulate Role:</span>
+                <select
+                  value={currentRole}
+                  onChange={(e) => handleRoleChange(e.target.value)}
+                  className="px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-bold text-slate-700 bg-slate-50 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                >
+                  {ROLES.map(role => (
+                    <option key={role.id} value={role.id}>{role.label}</option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
         </header>
 
@@ -191,6 +225,7 @@ export default function App() {
           {activeTab === 'emr' && <EMRView userRole={currentRole} />}
           {activeTab === 'inventory' && <InventoryView userRole={currentRole} />}
           {activeTab === 'billing' && <BillingView userRole={currentRole} />}
+          {activeTab === 'mappings' && currentRole === 'ADMIN' && <MappingView />}
         </main>
       </div>
 
