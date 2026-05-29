@@ -35,10 +35,10 @@ public class BillingController {
         
         // Dynamic summary of double-entry ledger book (Debit = Inflow, Credit = Outflow)
         double totalInflow = entries.stream()
-                .mapToDouble(CashLedger::getDebit)
+                .mapToDouble(e -> e.getDebit() != null ? e.getDebit() : 0.0)
                 .sum();
         double totalOutflow = entries.stream()
-                .mapToDouble(CashLedger::getCredit)
+                .mapToDouble(e -> e.getCredit() != null ? e.getCredit() : 0.0)
                 .sum();
 
         return ResponseEntity.ok(Map.of(

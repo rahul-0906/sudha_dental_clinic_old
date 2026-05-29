@@ -6,5 +6,5 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface CashLedgerRepository extends JpaRepository<CashLedger, Long> {
-    List<CashLedger> findByDateBetween(LocalDateTime start, LocalDateTime end);
+    List<CashLedger> findByCreatedDateBetween(LocalDateTime start, LocalDateTime end);
 }

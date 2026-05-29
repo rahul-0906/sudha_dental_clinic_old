@@ -22,10 +22,8 @@ public class CashLedger {
     private Long id;
 
     // Strict Double-Entry: debit is inflow (receipts), credit is outflow (payments)
-    @Column(nullable = false)
     private Double debit;  // Cash inflow (Debit Cash increases cash balance)
 
-    @Column(nullable = false)
     private Double credit; // Cash outflow (Credit Cash decreases cash balance)
 
     @Column(nullable = false)
