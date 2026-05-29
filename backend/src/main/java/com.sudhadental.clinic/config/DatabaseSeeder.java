@@ -34,7 +34,8 @@ public class DatabaseSeeder implements CommandLineRunner {
         // Clean up obsolete database schema columns if they exist from legacy schema versions
         try {
             jdbcTemplate.execute("ALTER TABLE treatment_records DROP COLUMN IF EXISTS date");
-            log.info("Legacy schema migration clean up: dropped column 'date' from 'treatment_records'.");
+            jdbcTemplate.execute("ALTER TABLE invoices DROP COLUMN IF EXISTS billing_date");
+            log.info("Legacy schema migration clean up: dropped column 'date' from 'treatment_records' and 'billing_date' from 'invoices'.");
         } catch (Exception e) {
             log.warn("Legacy schema migration skipped: {}", e.getMessage());
         }
