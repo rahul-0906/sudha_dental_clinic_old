@@ -19,6 +19,7 @@ export default function EMRView({ userRole }) {
   const [cost, setCost] = useState(0);
   const [paidAmount, setPaidAmount] = useState(0);
   const [procedureOptions, setProcedureOptions] = useState([]);
+  const [medicines, setMedicines] = useState([]);
   
   // Prescription List
   const [prescriptions, setPrescriptions] = useState([]);
@@ -59,6 +60,17 @@ export default function EMRView({ userRole }) {
           setCost(standard ? standard.defaultCost : 1500);
           setPaidAmount(standard ? standard.defaultCost : 1500);
         }
+      }
+      
+      try {
+        const inventoryList = await api.inventory.list();
+        const meds = inventoryList.filter(item => (item.type || 'MATERIAL') === 'MEDICINE');
+        setMedicines(meds);
+        if (meds.length > 0) {
+          setNewMed(prev => ({ ...prev, medicineName: meds[0].materialName }));
+        }
+      } catch (err) {
+        console.error("Failed to load medicines list", err);
       }
     };
     loadData();
@@ -298,13 +310,21 @@ export default function EMRView({ userRole }) {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end bg-slate-50/50 p-4 rounded-xl border border-dashed border-slate-200">
               <div>
                 <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Medicine Name</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Amoxicillin"
+                <select
                   value={newMed.medicineName}
                   onChange={(e) => setNewMed({ ...newMed, medicineName: e.target.value })}
-                  className="w-full px-3.5 py-1.5 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none"
-                />
+                  className="w-full px-3.5 py-2.5 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none"
+                >
+                  {medicines.length === 0 ? (
+                    <option value="">No medicines found</option>
+                  ) : (
+                    medicines.map(med => (
+                      <option key={med.id} value={med.materialName}>
+                        {med.materialName} ({med.quantity} {med.unit} left)
+                      </option>
+                    ))
+                  )}
+                </select>
               </div>
               <div>
                 <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Dosage</label>

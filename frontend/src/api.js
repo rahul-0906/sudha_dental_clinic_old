@@ -28,15 +28,19 @@ const seedMockData = () => {
     ]));
   }
   
-  if (!localStorage.getItem(KEYS.INVENTORY)) {
+  if (!localStorage.getItem(KEYS.INVENTORY) || !JSON.parse(localStorage.getItem(KEYS.INVENTORY)).some(item => item.type === 'MEDICINE')) {
     localStorage.setItem(KEYS.INVENTORY, JSON.stringify([
-      { id: 1, materialName: 'Composite Resin', quantity: 15, lowStockThreshold: 5, unit: 'tubes' },
-      { id: 2, materialName: 'Dental Anesthetic', quantity: 8, lowStockThreshold: 10, unit: 'cartridges' },
-      { id: 3, materialName: 'Syringe Needle', quantity: 45, lowStockThreshold: 15, unit: 'pcs' },
-      { id: 4, materialName: 'Gutta Percha Points', quantity: 30, lowStockThreshold: 10, unit: 'pcs' },
-      { id: 5, materialName: 'Suture Thread', quantity: 4, lowStockThreshold: 5, unit: 'pcs' },
-      { id: 6, materialName: 'Prophy Paste', quantity: 12, lowStockThreshold: 4, unit: 'tubes' },
-      { id: 7, materialName: 'Saliva Ejector', quantity: 50, lowStockThreshold: 15, unit: 'pcs' }
+      { id: 1, materialName: 'Composite Resin', quantity: 15, lowStockThreshold: 5, unit: 'tubes', type: 'MATERIAL' },
+      { id: 2, materialName: 'Dental Anesthetic', quantity: 8, lowStockThreshold: 10, unit: 'cartridges', type: 'MATERIAL' },
+      { id: 3, materialName: 'Syringe Needle', quantity: 45, lowStockThreshold: 15, unit: 'pcs', type: 'MATERIAL' },
+      { id: 4, materialName: 'Gutta Percha Points', quantity: 30, lowStockThreshold: 10, unit: 'pcs', type: 'MATERIAL' },
+      { id: 5, materialName: 'Suture Thread', quantity: 4, lowStockThreshold: 5, unit: 'pcs', type: 'MATERIAL' },
+      { id: 6, materialName: 'Prophy Paste', quantity: 12, lowStockThreshold: 4, unit: 'tubes', type: 'MATERIAL' },
+      { id: 7, materialName: 'Saliva Ejector', quantity: 50, lowStockThreshold: 15, unit: 'pcs', type: 'MATERIAL' },
+      { id: 8, materialName: 'Amoxicillin 500mg', quantity: 100, lowStockThreshold: 20, unit: 'tablets', type: 'MEDICINE' },
+      { id: 9, materialName: 'Ibuprofen 400mg', quantity: 150, lowStockThreshold: 30, unit: 'tablets', type: 'MEDICINE' },
+      { id: 10, materialName: 'Paracetamol 500mg', quantity: 200, lowStockThreshold: 45, unit: 'tablets', type: 'MEDICINE' },
+      { id: 11, materialName: 'Chlorhexidine Mouthwash', quantity: 25, lowStockThreshold: 8, unit: 'bottles', type: 'MEDICINE' }
     ]));
   }
 
@@ -246,6 +250,17 @@ function mockRequest(endpoint, options = {}) {
     let list = JSON.parse(localStorage.getItem(KEYS.INVENTORY));
     if (endpoint === '/inventory' && method === 'GET') {
       return Promise.resolve(list);
+    }
+    if (endpoint === '/inventory' && method === 'POST') {
+      const newItem = {
+        ...body,
+        id: Date.now(),
+        createdBy: username,
+        createdDate: new Date().toISOString()
+      };
+      list.push(newItem);
+      localStorage.setItem(KEYS.INVENTORY, JSON.stringify(list));
+      return Promise.resolve(newItem);
     }
     if (endpoint === '/inventory/alerts' && method === 'GET') {
       return Promise.resolve(list.filter(item => item.quantity < item.lowStockThreshold));
@@ -472,6 +487,7 @@ export const api = {
   inventory: {
     list: () => request('/inventory'),
     alerts: () => request('/inventory/alerts'),
+    create: (data) => request('/inventory', { method: 'POST', body: JSON.stringify(data) }),
     addStock: (id, quantity) => request(`/inventory/${id}/stock`, { method: 'PATCH', body: JSON.stringify({ quantity }) }),
     updateThreshold: (id, data) => request(`/inventory/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   },

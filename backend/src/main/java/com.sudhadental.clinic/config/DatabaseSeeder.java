@@ -55,18 +55,24 @@ public class DatabaseSeeder implements CommandLineRunner {
         }
 
         // 2. Seed Inventory
-        if (inventoryRepository.count() == 0) {
+        if (inventoryRepository.count() == 0 || !inventoryRepository.findByMaterialNameIgnoreCase("Amoxicillin 500mg").isPresent()) {
+            treatmentMaterialMappingRepository.deleteAll();
+            inventoryRepository.deleteAll();
             List<Inventory> materials = Arrays.asList(
-                    Inventory.builder().materialName("Composite Resin").quantity(15).lowStockThreshold(5).unit("tubes").build(),
-                    Inventory.builder().materialName("Dental Anesthetic").quantity(8).lowStockThreshold(10).unit("cartridges").build(),
-                    Inventory.builder().materialName("Syringe Needle").quantity(45).lowStockThreshold(15).unit("pcs").build(),
-                    Inventory.builder().materialName("Gutta Percha Points").quantity(30).lowStockThreshold(10).unit("pcs").build(),
-                    Inventory.builder().materialName("Suture Thread").quantity(4).lowStockThreshold(5).unit("pcs").build(),
-                    Inventory.builder().materialName("Prophy Paste").quantity(12).lowStockThreshold(4).unit("tubes").build(),
-                    Inventory.builder().materialName("Saliva Ejector").quantity(50).lowStockThreshold(15).unit("pcs").build()
+                    Inventory.builder().materialName("Composite Resin").quantity(15).lowStockThreshold(5).unit("tubes").type("MATERIAL").build(),
+                    Inventory.builder().materialName("Dental Anesthetic").quantity(8).lowStockThreshold(10).unit("cartridges").type("MATERIAL").build(),
+                    Inventory.builder().materialName("Syringe Needle").quantity(45).lowStockThreshold(15).unit("pcs").type("MATERIAL").build(),
+                    Inventory.builder().materialName("Gutta Percha Points").quantity(30).lowStockThreshold(10).unit("pcs").type("MATERIAL").build(),
+                    Inventory.builder().materialName("Suture Thread").quantity(4).lowStockThreshold(5).unit("pcs").type("MATERIAL").build(),
+                    Inventory.builder().materialName("Prophy Paste").quantity(12).lowStockThreshold(4).unit("tubes").type("MATERIAL").build(),
+                    Inventory.builder().materialName("Saliva Ejector").quantity(50).lowStockThreshold(15).unit("pcs").type("MATERIAL").build(),
+                    Inventory.builder().materialName("Amoxicillin 500mg").quantity(100).lowStockThreshold(20).unit("tablets").type("MEDICINE").build(),
+                    Inventory.builder().materialName("Ibuprofen 400mg").quantity(150).lowStockThreshold(30).unit("tablets").type("MEDICINE").build(),
+                    Inventory.builder().materialName("Paracetamol 500mg").quantity(200).lowStockThreshold(45).unit("tablets").type("MEDICINE").build(),
+                    Inventory.builder().materialName("Chlorhexidine Mouthwash").quantity(25).lowStockThreshold(8).unit("bottles").type("MEDICINE").build()
             );
             inventoryRepository.saveAll(materials);
-            log.info("Seeded initial inventory items.");
+            log.info("Seeded initial inventory items (materials and medicines).");
         }
 
         // 3. Seed Treatment Material Mappings dynamically

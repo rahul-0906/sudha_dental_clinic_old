@@ -33,6 +33,10 @@ public class Inventory {
     @Column(nullable = false)
     private String unit;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private String type = "MATERIAL"; // "MATERIAL" or "MEDICINE"
+
     // Auditing columns
     @CreatedBy
     @Column(updatable = false)

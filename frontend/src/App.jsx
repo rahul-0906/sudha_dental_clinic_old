@@ -5,6 +5,7 @@ import EMRView from './views/EMRView';
 import InventoryView from './views/InventoryView';
 import BillingView from './views/BillingView';
 import MappingView from './views/MappingView';
+import PatientHistoryView from './views/PatientHistoryView';
 import { LayoutDashboard, BookOpen, Layers, CreditCard, Stethoscope, Users, Calendar, Plus, Settings } from 'lucide-react';
 import { api } from './api';
 
@@ -118,6 +119,18 @@ export default function App() {
           </button>
 
           <button
+            onClick={() => setActiveTab('history')}
+            className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl transition-all text-sm font-semibold ${
+              activeTab === 'history'
+                ? 'bg-primary-700 text-white shadow-md'
+                : 'hover:bg-slate-800 hover:text-slate-100 text-slate-400'
+            }`}
+          >
+            <Users className="w-5 h-5" />
+            <span>Patient Files & History</span>
+          </button>
+
+          <button
             onClick={() => setActiveTab('emr')}
             className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl transition-all text-sm font-semibold ${
               activeTab === 'emr'
@@ -222,6 +235,7 @@ export default function App() {
         {/* Content Pane */}
         <main className="flex-1 p-8 overflow-y-auto">
           {activeTab === 'dashboard' && <DashboardView userRole={currentRole} />}
+          {activeTab === 'history' && <PatientHistoryView />}
           {activeTab === 'emr' && <EMRView userRole={currentRole} />}
           {activeTab === 'inventory' && <InventoryView userRole={currentRole} />}
           {activeTab === 'billing' && <BillingView userRole={currentRole} />}
