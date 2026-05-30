@@ -19,7 +19,7 @@ export default function SoloLayout() {
     <div style={{ display: 'flex', height: '100%', overflow: 'hidden' }}>
       {/* Left: Patient Search + Queue */}
       <div style={{
-        width: 340, borderRight: '1px solid var(--border)', display: 'flex',
+        width: 260, borderRight: '1px solid var(--border)', display: 'flex',
         flexDirection: 'column', overflow: 'hidden', background: 'var(--bg-800)', flexShrink: 0,
       }}>
         <div style={{ padding: 16, borderBottom: '1px solid var(--border)', flexShrink: 0 }}>
