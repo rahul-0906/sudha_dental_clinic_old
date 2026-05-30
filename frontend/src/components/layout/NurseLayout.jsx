@@ -5,9 +5,9 @@ import DoctorPanel from './DoctorPanel'
 export default function NurseLayout() {
   return (
     <div style={{ display: 'flex', height: '100%', overflow: 'hidden' }}>
-      {/* Nurse Panel — Left 42% */}
+      {/* Nurse Panel — Left 32% */}
       <div style={{
-        width: '42%', borderRight: '1px solid var(--border)',
+        width: '32%', borderRight: '1px solid var(--border)',
         display: 'flex', flexDirection: 'column', overflow: 'hidden',
         background: 'var(--bg-800)',
       }}>
@@ -36,7 +36,7 @@ export default function NurseLayout() {
         opacity: 0.4, flexShrink: 0,
       }} />
 
-      {/* Doctor Panel — Right 58% */}
+      {/* Doctor Panel — Right 68% */}
       <div style={{
         flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden',
         background: 'var(--bg-900)',
