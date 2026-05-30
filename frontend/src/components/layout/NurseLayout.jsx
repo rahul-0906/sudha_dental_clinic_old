@@ -15,10 +15,10 @@ export default function NurseLayout() {
           padding: '12px 16px', borderBottom: '1px solid var(--border)',
           display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0,
         }}>
-          <span style={{ fontSize: 14 }}>👩‍⚕️</span>
-          <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--primary-light)' }}>NURSE STATION</span>
+          <span style={{ fontSize: 16 }}>👩‍⚕️</span>
+          <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--primary-light)' }}>NURSE STATION</span>
           <span style={{
-            marginLeft: 'auto', fontSize: 10, color: 'var(--text-muted)',
+            marginLeft: 'auto', fontSize: 11, color: 'var(--text-muted)',
             background: 'rgba(13,148,136,0.1)', padding: '2px 8px', borderRadius: 10,
             border: '1px solid var(--border)',
           }}>
@@ -45,10 +45,10 @@ export default function NurseLayout() {
           padding: '12px 16px', borderBottom: '1px solid var(--border)',
           display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0,
         }}>
-          <span style={{ fontSize: 14 }}>🩺</span>
-          <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-secondary)' }}>DOCTOR WORKSPACE</span>
+          <span style={{ fontSize: 16 }}>🩺</span>
+          <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-secondary)' }}>DOCTOR WORKSPACE</span>
           <span style={{
-            marginLeft: 'auto', fontSize: 10, color: 'var(--text-muted)',
+            marginLeft: 'auto', fontSize: 11, color: 'var(--text-muted)',
             background: 'rgba(255,255,255,0.04)', padding: '2px 8px', borderRadius: 10,
             border: '1px solid var(--border)',
           }}>

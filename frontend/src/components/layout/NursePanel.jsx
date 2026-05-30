@@ -19,7 +19,7 @@ export default function NursePanel() {
       <button
         onClick={() => setShowRegModal(true)}
         className="btn-secondary"
-        style={{ width: '100%', fontSize: 13, padding: '8px' }}
+        style={{ width: '100%', fontSize: 16, padding: '10px 12px', fontWeight: 600 }}
       >
         + Register New Patient
       </button>
@@ -31,10 +31,10 @@ export default function NursePanel() {
             key={tab}
             onClick={() => setActiveTab(tab)}
             style={{
-              flex: 1, padding: '6px', borderRadius: 'var(--radius-sm)', fontSize: 12, fontWeight: 600,
-              background: activeTab === tab ? 'rgba(13,148,136,0.2)' : 'rgba(255,255,255,0.04)',
+              flex: 1, padding: '10px 8px', borderRadius: 'var(--radius-sm)', fontSize: 15, fontWeight: 600,
+              background: activeTab === tab ? 'var(--primary-glow-bright)' : 'rgba(0,0,0,0.03)',
               border: activeTab === tab ? '1px solid var(--border-bright)' : '1px solid var(--border)',
-              color: activeTab === tab ? 'var(--primary-light)' : 'var(--text-muted)',
+              color: activeTab === tab ? 'var(--primary)' : 'var(--text-secondary)',
               cursor: 'pointer',
             }}
           >

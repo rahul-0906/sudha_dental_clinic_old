@@ -27,7 +27,7 @@ export default function SoloLayout() {
           <button
             onClick={() => setShowRegModal(true)}
             className="btn-secondary"
-            style={{ width: '100%', marginTop: 10, fontSize: 13, padding: '8px' }}
+            style={{ width: '100%', marginTop: 10, fontSize: 16, padding: '10px 12px', fontWeight: 600 }}
           >
             + Register New Patient
           </button>

@@ -68,34 +68,34 @@ function PatientCard({ visit, onSelect, compact, nurseView }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }} onClick={handleSelectPatient}>
         {/* Avatar */}
         <div style={{
-          width: compact ? 32 : 38, height: compact ? 32 : 38, borderRadius: '50%', flexShrink: 0,
+          width: compact ? 36 : 40, height: compact ? 36 : 40, borderRadius: '50%', flexShrink: 0,
           background: `linear-gradient(135deg, ${sc.color}40, ${sc.color}20)`,
           border: `1px solid ${sc.color}40`,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: compact ? 13 : 15, fontWeight: 700, color: sc.color,
+          fontSize: compact ? 16 : 18, fontWeight: 700, color: sc.color,
         }}>
           {visit.patient?.name?.[0]?.toUpperCase() || '?'}
         </div>
 
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {visit.patient?.name || 'Unknown'}
             </span>
             <span style={{
-              fontSize: 9, fontWeight: 700, padding: '1px 6px', borderRadius: 8,
+              fontSize: 11, fontWeight: 700, padding: '1px 6px', borderRadius: 8,
               background: sc.bg, border: `1px solid ${sc.border}`, color: sc.color, flexShrink: 0,
             }}>
               {sc.emoji} {sc.label}
             </span>
           </div>
           {!compact && (
-            <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
+            <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 2 }}>
               {visit.patient?.phone} · {elapsed}
             </div>
           )}
           {compact && elapsed && (
-            <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>{elapsed}</div>
+            <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{elapsed}</div>
           )}
         </div>
       </div>
@@ -107,8 +107,8 @@ function PatientCard({ visit, onSelect, compact, nurseView }) {
             <button
               onClick={(e) => { e.stopPropagation(); handleStatusChange('CONSULTATION') }}
               style={{
-                flex: 1, padding: '5px 0', borderRadius: 'var(--radius-sm)', fontSize: 11, fontWeight: 600,
-                background: 'rgba(59,130,246,0.15)', border: '1px solid rgba(59,130,246,0.3)', color: '#93C5FD', cursor: 'pointer',
+                flex: 1, padding: '8px 0', borderRadius: 'var(--radius-sm)', fontSize: 14, fontWeight: 600,
+                background: 'rgba(59,130,246,0.15)', border: '1px solid rgba(59,130,246,0.3)', color: 'var(--primary)', cursor: 'pointer',
               }}
             >
               🩺 Start Consult
@@ -118,8 +118,8 @@ function PatientCard({ visit, onSelect, compact, nurseView }) {
             <button
               onClick={(e) => { e.stopPropagation(); handleStatusChange('CHECKOUT') }}
               style={{
-                flex: 1, padding: '5px 0', borderRadius: 'var(--radius-sm)', fontSize: 11, fontWeight: 600,
-                background: 'rgba(168,85,247,0.15)', border: '1px solid rgba(168,85,247,0.3)', color: '#C084FC', cursor: 'pointer',
+                flex: 1, padding: '8px 0', borderRadius: 'var(--radius-sm)', fontSize: 14, fontWeight: 600,
+                background: 'rgba(168,85,247,0.15)', border: '1px solid rgba(168,85,247,0.3)', color: '#A855F7', cursor: 'pointer',
               }}
             >
               💊 Move to Checkout
@@ -129,7 +129,7 @@ function PatientCard({ visit, onSelect, compact, nurseView }) {
             <button
               onClick={(e) => { e.stopPropagation(); handleStatusChange('DONE') }}
               style={{
-                flex: 1, padding: '5px 0', borderRadius: 'var(--radius-sm)', fontSize: 11, fontWeight: 600,
+                flex: 1, padding: '8px 0', borderRadius: 'var(--radius-sm)', fontSize: 14, fontWeight: 600,
                 background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.3)', color: '#34D399', cursor: 'pointer',
               }}
             >
@@ -162,23 +162,23 @@ export default function QueueBoard({ compact, nurseView }) {
     return (
       <div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-muted)' }}>
+          <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-muted)' }}>
             TODAY'S QUEUE ({activeQueue.length})
           </div>
           <button onClick={() => dispatch(fetchTodayQueue())} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
-            <RefreshCw size={12} />
+            <RefreshCw size={14} />
           </button>
         </div>
-        {loading && <div style={{ textAlign: 'center', padding: 20, color: 'var(--text-muted)', fontSize: 12 }}>Loading...</div>}
+        {loading && <div style={{ textAlign: 'center', padding: 20, color: 'var(--text-muted)', fontSize: 15 }}>Loading...</div>}
         {!loading && activeQueue.length === 0 && (
-          <div style={{ textAlign: 'center', padding: 30, color: 'var(--text-muted)', fontSize: 12 }}>
-            <div style={{ fontSize: 24, marginBottom: 6 }}>🏥</div>
+          <div style={{ textAlign: 'center', padding: 30, color: 'var(--text-muted)', fontSize: 15 }}>
+            <div style={{ fontSize: 28, marginBottom: 6 }}>🏥</div>
             Queue is empty
           </div>
         )}
         {activeQueue.map(v => <PatientCard key={v.id} visit={v} compact={compact} nurseView={nurseView} />)}
         {done.length > 0 && (
-          <div style={{ fontSize: 11, color: 'var(--text-muted)', textAlign: 'center', marginTop: 8, padding: '6px 0', borderTop: '1px solid var(--border)' }}>
+          <div style={{ fontSize: 13, color: 'var(--text-muted)', textAlign: 'center', marginTop: 8, padding: '6px 0', borderTop: '1px solid var(--border)' }}>
             ✅ {done.length} patient{done.length !== 1 ? 's' : ''} seen today
           </div>
         )}

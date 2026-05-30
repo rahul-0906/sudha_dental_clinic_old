@@ -70,7 +70,7 @@ export default function PatientSearch() {
   return (
     <div style={{ position: 'relative' }}>
       <div style={{ position: 'relative' }}>
-        <Search size={16} style={{
+        <Search size={18} style={{
           position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)',
           color: 'var(--text-muted)', pointerEvents: 'none',
         }} />
@@ -81,7 +81,7 @@ export default function PatientSearch() {
           onFocus={() => query && setOpen(true)}
           placeholder="Search patient by name or phone..."
           className="input-field"
-          style={{ paddingLeft: 38, paddingRight: 36, width: '100%', boxSizing: 'border-box' }}
+          style={{ paddingLeft: 38, paddingRight: 36, width: '100%', boxSizing: 'border-box', fontSize: '16px' }}
         />
         {query && (
           <button onClick={clear} style={{
@@ -89,7 +89,7 @@ export default function PatientSearch() {
             background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)',
             display: 'flex', padding: 2,
           }}>
-            <X size={14} />
+            <X size={16} />
           </button>
         )}
       </div>
@@ -104,7 +104,7 @@ export default function PatientSearch() {
           animation: 'slideIn 0.15s ease',
         }}>
           {loading && (
-            <div style={{ padding: '12px 16px', color: 'var(--text-muted)', fontSize: 13, textAlign: 'center' }}>
+            <div style={{ padding: '12px 16px', color: 'var(--text-muted)', fontSize: 14, textAlign: 'center' }}>
               <span style={{
                 display: 'inline-block', width: 14, height: 14,
                 border: '2px solid var(--border)', borderTopColor: 'var(--primary)',
@@ -115,7 +115,7 @@ export default function PatientSearch() {
           )}
 
           {!loading && results.length === 0 && (
-            <div style={{ padding: '20px 16px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
+            <div style={{ padding: '20px 16px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 14 }}>
               <div style={{ fontSize: 24, marginBottom: 8 }}>🦷</div>
               No patients found for "{query}"
             </div>
@@ -142,17 +142,17 @@ export default function PatientSearch() {
                 {patient.name?.[0]?.toUpperCase()}
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {patient.name}
                 </div>
-                <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+                <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>
                   📱 {patient.phone}
                 </div>
               </div>
               <button
                 onClick={(e) => handleAddToQueue(patient, e)}
                 className="btn-primary"
-                style={{ fontSize: 11, padding: '4px 10px', flexShrink: 0 }}
+                style={{ fontSize: 13, padding: '6px 12px', flexShrink: 0 }}
               >
                 + Queue
               </button>
