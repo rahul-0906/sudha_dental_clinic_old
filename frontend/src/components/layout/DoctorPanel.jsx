@@ -2,6 +2,8 @@ import { useSelector } from 'react-redux'
 import ConsultationForm from '../consultation/ConsultationForm'
 import VisitHistory from '../patient/VisitHistory'
 import XrayManager from '../xray/XrayManager'
+import { ToothLogo } from './AppShell'
+import { Phone } from 'lucide-react'
 
 export default function DoctorPanel() {
   const selectedPatient = useSelector((state) => state.patient.selectedPatient)
@@ -10,7 +12,7 @@ export default function DoctorPanel() {
   if (!selectedPatient) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 12 }}>
-        <div style={{ fontSize: 56 }}>🦷</div>
+        <ToothLogo size={56} />
         <h3 style={{ color: 'var(--text-secondary)', margin: 0, fontWeight: 600 }}>
           No Patient Selected
         </h3>
@@ -42,10 +44,13 @@ export default function DoctorPanel() {
           <div style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>
             {selectedPatient.name}
           </div>
-          <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>
-            📱 {selectedPatient.phone}
-            {selectedPatient.gender && ` · ${selectedPatient.gender}`}
-            {selectedPatient.dob && ` · DOB: ${selectedPatient.dob}`}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+              <Phone size={12} />
+              <span>{selectedPatient.phone}</span>
+            </span>
+            {selectedPatient.gender && <span>· {selectedPatient.gender}</span>}
+            {selectedPatient.dob && <span>· DOB: {selectedPatient.dob}</span>}
           </div>
         </div>
         {activeVisit && (

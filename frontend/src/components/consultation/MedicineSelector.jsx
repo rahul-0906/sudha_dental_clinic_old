@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from 'react'
-import { X, Search } from 'lucide-react'
+import { X, Search, Package, AlertTriangle } from 'lucide-react'
 import { searchMedications } from '../../api/medications'
 
 export default function MedicineSelector({ selectedMeds, onAdd, onRemove, onQuantityChange }) {
@@ -35,8 +35,9 @@ export default function MedicineSelector({ selectedMeds, onAdd, onRemove, onQuan
 
   return (
     <div>
-      <label style={{ fontSize: 12, color: 'var(--text-secondary)', fontWeight: 600, display: 'block', marginBottom: 6 }}>
-        💊 Add Medications
+      <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text-secondary)', fontWeight: 600, marginBottom: 6 }}>
+        <Package size={14} />
+        <span>Add Medications</span>
       </label>
 
       {/* Search input */}
@@ -95,8 +96,9 @@ export default function MedicineSelector({ selectedMeds, onAdd, onRemove, onQuan
                     <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {med.name}
                     </div>
-                    <div style={{ fontSize: 11, color: lowStock ? 'var(--warning)' : 'var(--text-muted)' }}>
-                      {lowStock ? '⚠️ ' : ''}Stock: {med.currentStock} {med.unit}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: lowStock ? 'var(--warning)' : 'var(--text-muted)' }}>
+                      {lowStock && <AlertTriangle size={10} style={{ color: 'var(--warning)' }} />}
+                      <span>Stock: {med.currentStock} {med.unit}</span>
                     </div>
                   </div>
                   <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--primary-light)', flexShrink: 0 }}>
@@ -145,7 +147,7 @@ export default function MedicineSelector({ selectedMeds, onAdd, onRemove, onQuan
                 <span style={{ color: 'var(--primary-light)', fontWeight: 600, fontSize: 12, minWidth: 50, textAlign: 'right' }}>
                   ₹{(med.unitSellingPrice * med.quantity).toFixed(0)}
                 </span>
-                {overStock && <span title="Exceeds stock!" style={{ color: 'var(--danger)', fontSize: 12 }}>⚠️</span>}
+                {overStock && <AlertTriangle size={14} style={{ color: 'var(--danger)' }} title="Exceeds stock!" />}
                 <button onClick={() => onRemove(med.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', display: 'flex', padding: 2 }}>
                   <X size={14} />
                 </button>

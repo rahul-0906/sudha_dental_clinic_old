@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from 'react'
 import { useDispatch } from 'react-redux'
-import { Search, X } from 'lucide-react'
+import { Search, X, User, Phone } from 'lucide-react'
 import { searchPatients } from '../../api/patients'
 import { setSelectedPatient } from '../../store/slices/patientSlice'
 import { addToQueue } from '../../api/visits'
@@ -115,9 +115,9 @@ export default function PatientSearch() {
           )}
 
           {!loading && results.length === 0 && (
-            <div style={{ padding: '20px 16px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 14 }}>
-              <div style={{ fontSize: 24, marginBottom: 8 }}>🦷</div>
-              No patients found for "{query}"
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px 16px', color: 'var(--text-muted)', fontSize: 14, gap: 6 }}>
+              <User size={24} strokeWidth={1.5} style={{ color: 'var(--text-muted)' }} />
+              <span>No patients found for "{query}"</span>
             </div>
           )}
 
@@ -145,8 +145,9 @@ export default function PatientSearch() {
                 <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {patient.name}
                 </div>
-                <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>
-                  📱 {patient.phone}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 13, color: 'var(--text-muted)', marginTop: 2 }}>
+                  <Phone size={11} />
+                  <span>{patient.phone}</span>
                 </div>
               </div>
               <button

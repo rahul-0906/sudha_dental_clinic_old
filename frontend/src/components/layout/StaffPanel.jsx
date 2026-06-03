@@ -4,6 +4,7 @@ import PatientSearch from '../patient/PatientSearch'
 import PatientRegistrationModal from '../patient/PatientRegistrationModal'
 import QueueBoard from '../queue/QueueBoard'
 import CheckoutPanel from '../checkout/CheckoutPanel'
+import { UserPlus, ListOrdered, CreditCard, CheckCircle } from 'lucide-react'
 
 export default function StaffPanel() {
   const [showRegModal, setShowRegModal] = useState(false)
@@ -19,9 +20,10 @@ export default function StaffPanel() {
       <button
         onClick={() => setShowRegModal(true)}
         className="btn-secondary"
-        style={{ width: '100%', fontSize: 16, padding: '10px 12px', fontWeight: 600 }}
+        style={{ width: '100%', fontSize: 16, padding: '10px 12px', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
       >
-        + Register New Patient
+        <UserPlus size={16} />
+        Register New Patient
       </button>
 
       {/* Tabs */}
@@ -31,14 +33,28 @@ export default function StaffPanel() {
             key={tab}
             onClick={() => setActiveTab(tab)}
             style={{
-              flex: 1, padding: '10px 8px', borderRadius: 'var(--radius-sm)', fontSize: 15, fontWeight: 600,
+              flex: 1, padding: '10px 8px', borderRadius: 'var(--radius-sm)', fontSize: 14, fontWeight: 600,
               background: activeTab === tab ? 'var(--primary-glow-bright)' : 'rgba(0,0,0,0.03)',
               border: activeTab === tab ? '1px solid var(--border-bright)' : '1px solid var(--border)',
               color: activeTab === tab ? 'var(--primary)' : 'var(--text-secondary)',
               cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 6,
             }}
           >
-            {tab === 'queue' ? `🏥 Queue (${queue.filter(v => v.status !== 'DONE').length})` : `💊 Checkout (${checkoutPatients.length})`}
+            {tab === 'queue' ? (
+              <>
+                <ListOrdered size={14} />
+                <span>Queue ({queue.filter(v => v.status !== 'DONE').length})</span>
+              </>
+            ) : (
+              <>
+                <CreditCard size={14} />
+                <span>Checkout ({checkoutPatients.length})</span>
+              </>
+            )}
           </button>
         ))}
       </div>
@@ -50,8 +66,8 @@ export default function StaffPanel() {
       ) : (
         <div style={{ flex: 1, overflow: 'auto' }}>
           {checkoutPatients.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)', fontSize: 13 }}>
-              <div style={{ fontSize: 32, marginBottom: 8 }}>✅</div>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 40, color: 'var(--text-muted)', fontSize: 13, gap: 8 }}>
+              <CheckCircle size={32} strokeWidth={1.5} style={{ color: 'var(--success)' }} />
               No patients pending checkout
             </div>
           ) : (

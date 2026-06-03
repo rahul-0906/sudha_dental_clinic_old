@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Plus, TrendingUp, TrendingDown, DollarSign } from 'lucide-react'
+import { Plus, TrendingUp, TrendingDown, DollarSign, FileText, Save } from 'lucide-react'
 import { getTransactions, addExpense } from '../../api/misc'
 import { format } from 'date-fns'
 import toast from 'react-hot-toast'
@@ -27,7 +27,10 @@ function ExpenseModal({ onClose, onSave }) {
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
       onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className="glass" style={{ width: '100%', maxWidth: 420, borderRadius: 'var(--radius-xl)', padding: 28, boxShadow: '0 25px 60px rgba(0,0,0,0.5)', animation: 'slideIn 0.3s ease' }}>
-        <h2 style={{ margin: '0 0 20px', fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>📝 Record Expense</h2>
+        <h2 style={{ display: 'flex', alignItems: 'center', gap: 6, margin: '0 0 20px', fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>
+          <FileText size={18} style={{ color: 'var(--primary)' }} />
+          <span>Record Expense</span>
+        </h2>
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <select className="input-field" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} style={{ boxSizing: 'border-box' }}>
             {EXPENSE_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
@@ -40,7 +43,12 @@ function ExpenseModal({ onClose, onSave }) {
           <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
             <button type="button" onClick={onClose} className="btn-secondary" style={{ flex: 1 }}>Cancel</button>
             <button type="submit" disabled={saving} className="btn-primary" style={{ flex: 2 }}>
-              {saving ? 'Saving...' : '💾 Record Expense'}
+              {saving ? 'Saving...' : (
+                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                  <Save size={16} />
+                  <span>Record Expense</span>
+                </span>
+              )}
             </button>
           </div>
         </form>
@@ -76,7 +84,10 @@ export default function FinancialLedger() {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
         <div>
-          <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>💰 Financial Ledger</h2>
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: 8, margin: 0, fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
+            <DollarSign size={20} style={{ color: 'var(--primary)' }} />
+            <span>Financial Ledger</span>
+          </h2>
           <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>{transactions.length} transactions</p>
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>

@@ -3,20 +3,12 @@ import { useDispatch } from 'react-redux'
 import toast from 'react-hot-toast'
 import { setAuthenticated } from '../../store/slices/appSlice'
 import { verifyPin } from '../../api/misc'
+import { Lock } from 'lucide-react'
 
 const ToothLogo = ({ size = 80, glow = false }) => (
-  <svg width={size} height={size} viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"
+  <svg width={size} height={size} viewBox="0 0 80 80" fill="none" stroke="var(--primary)" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg"
     style={glow ? { filter: 'drop-shadow(0 0 20px rgba(20,184,166,0.6))' } : {}}>
-    <path d="M40 8C28 8 18 16 18 26C18 32 20 38 22 44C24 50 25 60 27 66C28 70 30 72 32 72C34 72 36 68 38 62C39 58 40 54 40 54C40 54 41 58 42 62C44 68 46 72 48 72C50 72 52 70 53 66C55 60 56 50 58 44C60 38 62 32 62 26C62 16 52 8 40 8Z"
-      fill="url(#toothGrad)" stroke="rgba(20,184,166,0.5)" strokeWidth="1"/>
-    <path d="M32 18C32 18 28 20 26 24M48 18C48 18 52 20 54 24"
-      stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" strokeLinecap="round"/>
-    <defs>
-      <linearGradient id="toothGrad" x1="18" y1="8" x2="62" y2="72" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stopColor="#14B8A6"/>
-        <stop offset="100%" stopColor="#0F766E"/>
-      </linearGradient>
-    </defs>
+    <path d="M40 8C28 8 18 16 18 26C18 32 20 38 22 44C24 50 25 60 27 66C28 70 30 72 32 72C34 72 36 68 38 62C39 58 40 54 40 54C40 54 41 58 42 62C44 68 46 72 48 72C50 72 52 70 53 66C55 60 56 50 58 44C60 38 62 32 62 26C62 16 52 8 40 8Z" />
   </svg>
 )
 
@@ -69,7 +61,7 @@ export default function PinLogin() {
         localStorage.setItem('clinicPinDate', today)
         localStorage.setItem('clinicPinValid', 'true')
         localStorage.setItem('clinicPin', code)
-        toast.success('Welcome to Sudha Dental Clinic! 🦷')
+        toast.success('Welcome to Sudha Dental Clinic!')
         dispatch(setAuthenticated(true))
       } else {
         setError('Incorrect PIN. Please try again.')
@@ -138,8 +130,9 @@ export default function PinLogin() {
         </p>
 
         {/* PIN Label */}
-        <p style={{ color: 'var(--text-secondary)', fontSize: 14, marginBottom: 20, fontWeight: 500 }}>
-          🔐 Enter Daily PIN to Continue
+        <p style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, color: 'var(--text-secondary)', fontSize: 14, marginBottom: 20, fontWeight: 500 }}>
+          <Lock size={16} />
+          <span>Enter Daily PIN to Continue</span>
         </p>
 
         {/* PIN Input Boxes */}
@@ -208,7 +201,12 @@ export default function PinLogin() {
               }} />
               Verifying...
             </span>
-          ) : '🦷 Unlock Clinic'}
+          ) : (
+            <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+              <Lock size={16} />
+              <span>Unlock Clinic</span>
+            </span>
+          )}
         </button>
 
         <p style={{ color: 'var(--text-muted)', fontSize: 11, marginTop: 24 }}>

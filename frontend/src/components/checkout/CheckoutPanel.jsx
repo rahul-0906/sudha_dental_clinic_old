@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux'
 import toast from 'react-hot-toast'
 import { fetchTodayQueue } from '../../store/slices/queueSlice'
 import { checkoutVisit } from '../../api/visits'
+import { CreditCard, Package, Calendar, Check, Award } from 'lucide-react'
 
 export default function CheckoutPanel({ visit }) {
   const dispatch = useDispatch()
@@ -30,7 +31,7 @@ export default function CheckoutPanel({ visit }) {
       })
       setDone(true)
       dispatch(fetchTodayQueue())
-      toast.success(`Payment of ₹${grandTotal} collected! ✅`)
+      toast.success(`Payment of ₹${grandTotal} collected!`)
       setTimeout(() => setDone(false), 3000)
     } catch (err) {
       toast.error(err.response?.data?.message || 'Checkout failed')
@@ -42,24 +43,28 @@ export default function CheckoutPanel({ visit }) {
   if (done) {
     return (
       <div className="card" style={{
-        padding: 24, textAlign: 'center',
+        padding: 24, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         border: '1px solid rgba(16,185,129,0.3)',
         background: 'rgba(16,185,129,0.05)',
         animation: 'pulse 0.5s ease',
+        gap: 12
       }}>
-        <div style={{ fontSize: 48, marginBottom: 12 }}>🎉</div>
-        <h3 style={{ margin: '0 0 8px', color: 'var(--success)' }}>Payment Collected!</h3>
-        <p style={{ color: 'var(--text-muted)', fontSize: 13, margin: 0 }}>
-          ₹{grandTotal.toFixed(0)} received from {visit.patient?.name}
-        </p>
+        <Award size={48} strokeWidth={1.5} style={{ color: 'var(--success)' }} />
+        <div>
+          <h3 style={{ margin: '0 0 8px', color: 'var(--success)' }}>Payment Collected!</h3>
+          <p style={{ color: 'var(--text-muted)', fontSize: 13, margin: 0 }}>
+            ₹{grandTotal.toFixed(0)} received from {visit.patient?.name}
+          </p>
+        </div>
       </div>
     )
   }
 
   return (
     <div className="card" style={{ padding: 16, border: '1px solid rgba(168,85,247,0.2)' }}>
-      <h3 style={{ margin: '0 0 14px', fontSize: 14, fontWeight: 700, color: '#C084FC' }}>
-        💊 Checkout — {visit.patient?.name}
+      <h3 style={{ margin: '0 0 14px', fontSize: 14, fontWeight: 700, color: '#C084FC', display: 'flex', alignItems: 'center', gap: 6 }}>
+        <CreditCard size={16} />
+        <span>Checkout — {visit.patient?.name}</span>
       </h3>
 
       {/* Prescription list */}
@@ -72,7 +77,7 @@ export default function CheckoutPanel({ visit }) {
               background: 'var(--bg-700)', borderRadius: 'var(--radius-sm)', marginBottom: 5,
               fontSize: 13,
             }}>
-              <span style={{ color: 'var(--primary-light)' }}>💊</span>
+              <Package size={14} style={{ color: 'var(--primary-light)' }} />
               <span style={{ flex: 1, color: 'var(--text-primary)', fontWeight: 500 }}>
                 {p.medication?.name || p.medicationName}
               </span>
@@ -114,11 +119,13 @@ export default function CheckoutPanel({ visit }) {
 
       {visit.nextVisitDate && (
         <div style={{
+          display: 'flex', alignItems: 'center', gap: 6,
           fontSize: 12, color: '#FCD34D', marginBottom: 12, padding: '6px 10px',
           background: 'rgba(245,158,11,0.08)', borderRadius: 'var(--radius-sm)',
           border: '1px solid rgba(245,158,11,0.2)',
         }}>
-          📅 Next appointment: {visit.nextVisitDate}
+          <Calendar size={13} />
+          <span>Next appointment: {visit.nextVisitDate}</span>
         </div>
       )}
 
@@ -132,9 +139,20 @@ export default function CheckoutPanel({ visit }) {
           cursor: loading ? 'not-allowed' : 'pointer',
           boxShadow: loading ? 'none' : '0 4px 15px rgba(168,85,247,0.3)',
           transition: 'var(--transition)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 6
         }}
       >
-        {loading ? '⏳ Processing...' : `✅ Collect ₹${grandTotal.toFixed(0)} & Complete`}
+        {loading ? (
+          <span>Processing...</span>
+        ) : (
+          <>
+            <Check size={16} />
+            <span>Collect ₹{grandTotal.toFixed(0)} & Complete</span>
+          </>
+        )}
       </button>
     </div>
   )

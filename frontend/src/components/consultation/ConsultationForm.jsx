@@ -5,6 +5,7 @@ import MedicineSelector from './MedicineSelector'
 import { updateVisitStatus } from '../../api/visits'
 import { fetchTodayQueue } from '../../store/slices/queueSlice'
 import api from '../../api/axios'
+import { Stethoscope, Save, CreditCard, Clock } from 'lucide-react'
 
 export default function ConsultationForm({ visitId }) {
   const dispatch = useDispatch()
@@ -50,7 +51,7 @@ export default function ConsultationForm({ visitId }) {
 
       if (moveToCheckout) {
         await updateVisitStatus(activeVisit.id, 'CHECKOUT')
-        toast.success('Saved & moved to Checkout! 💊')
+        toast.success('Saved & moved to Checkout!')
       } else {
         toast.success('Consultation notes saved!')
       }
@@ -77,17 +78,29 @@ export default function ConsultationForm({ visitId }) {
   return (
     <div className="card" style={{ padding: 16 }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-        <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: 'var(--text-secondary)' }}>
-          🩺 Consultation
+        <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 6 }}>
+          <Stethoscope size={16} />
+          <span>Consultation</span>
         </h3>
         {activeVisit && (
           <div style={{
+            display: 'flex', alignItems: 'center', gap: 4,
             fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 12,
             background: canConsult ? 'rgba(59,130,246,0.15)' : 'rgba(245,158,11,0.1)',
             border: canConsult ? '1px solid rgba(59,130,246,0.3)' : '1px solid rgba(245,158,11,0.3)',
             color: canConsult ? '#93C5FD' : '#FCD34D',
           }}>
-            {canConsult ? '🩺 IN CONSULTATION' : '⏳ WAITING'}
+            {canConsult ? (
+              <>
+                <Stethoscope size={12} />
+                <span>IN CONSULTATION</span>
+              </>
+            ) : (
+              <>
+                <Clock size={12} />
+                <span>WAITING</span>
+              </>
+            )}
           </div>
         )}
       </div>
@@ -99,8 +112,9 @@ export default function ConsultationForm({ visitId }) {
       )}
 
       {isWaiting && (
-        <button onClick={handleStartConsult} className="btn-primary" style={{ width: '100%', marginBottom: 12 }}>
-          🩺 Start Consultation
+        <button onClick={handleStartConsult} className="btn-primary" style={{ width: '100%', marginBottom: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+          <Stethoscope size={16} />
+          <span>Start Consultation</span>
         </button>
       )}
 
@@ -197,7 +211,12 @@ export default function ConsultationForm({ visitId }) {
               className="btn-secondary"
               style={{ flex: 1 }}
             >
-              {saving ? 'Saving...' : '💾 Save Draft'}
+              {saving ? 'Saving...' : (
+                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                  <Save size={16} />
+                  <span>Save Draft</span>
+                </span>
+              )}
             </button>
             <button
               onClick={() => handleSave(true)}
@@ -205,7 +224,12 @@ export default function ConsultationForm({ visitId }) {
               className="btn-primary"
               style={{ flex: 2 }}
             >
-              {saving ? 'Saving...' : '💊 Save & Move to Checkout'}
+              {saving ? 'Saving...' : (
+                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                  <CreditCard size={16} />
+                  <span>Save & Move to Checkout</span>
+                </span>
+              )}
             </button>
           </div>
         </div>

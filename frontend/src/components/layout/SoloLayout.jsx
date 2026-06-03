@@ -7,6 +7,8 @@ import CheckoutPanel from '../checkout/CheckoutPanel'
 import ConsultationForm from '../consultation/ConsultationForm'
 import VisitHistory from '../patient/VisitHistory'
 import XrayManager from '../xray/XrayManager'
+import { ToothLogo } from './AppShell'
+import { Phone, Calendar } from 'lucide-react'
 
 export default function SoloLayout() {
   const [showRegModal, setShowRegModal] = useState(false)
@@ -40,8 +42,8 @@ export default function SoloLayout() {
       {/* Right: Unified Workspace */}
       <div style={{ flex: 1, overflow: 'auto', padding: 20 }}>
         {!selectedPatient ? (
-          <div style={{ textAlign: 'center', paddingTop: 80 }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>🦷</div>
+          <div style={{ textAlign: 'center', paddingTop: 80, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <ToothLogo size={48} />
             <h2 style={{ color: 'var(--text-secondary)', fontWeight: 600, marginBottom: 8 }}>
               Select a Patient to Begin
             </h2>
@@ -65,10 +67,18 @@ export default function SoloLayout() {
                 <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>
                   {selectedPatient.name}
                 </div>
-                <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
-                  📱 {selectedPatient.phone}
-                  {selectedPatient.dob && ` · 🎂 ${selectedPatient.dob}`}
-                  {selectedPatient.gender && ` · ${selectedPatient.gender}`}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', fontSize: 13, color: 'var(--text-secondary)', marginTop: 2 }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    <Phone size={12} />
+                    <span>{selectedPatient.phone}</span>
+                  </span>
+                  {selectedPatient.dob && (
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                      <Calendar size={12} />
+                      <span>{selectedPatient.dob}</span>
+                    </span>
+                  )}
+                  {selectedPatient.gender && <span>· {selectedPatient.gender}</span>}
                 </div>
               </div>
             </div>

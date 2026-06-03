@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Users, DollarSign, Pill, TrendingDown, TrendingUp, Printer } from 'lucide-react'
+import { Users, DollarSign, Pill, TrendingDown, TrendingUp, Printer, BarChart3, FileText, Calendar } from 'lucide-react'
 import { getDailyReport } from '../../api/misc'
 import { getTransactions } from '../../api/misc'
 import { format } from 'date-fns'
@@ -39,7 +39,10 @@ export default function DailyReport() {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
         <div>
-          <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>📊 Daily Closing Report</h2>
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: 8, margin: 0, fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
+            <BarChart3 size={20} style={{ color: 'var(--primary)' }} />
+            <span>Daily Closing Report</span>
+          </h2>
           <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
             Sudha Dental Clinic, Sankarankovil · Dr. Mariyappan
           </p>
@@ -55,8 +58,8 @@ export default function DailyReport() {
       {loading ? (
         <div style={{ textAlign: 'center', padding: 80, color: 'var(--text-muted)' }}>Loading report...</div>
       ) : !report ? (
-        <div style={{ textAlign: 'center', padding: 80 }}>
-          <div style={{ fontSize: 48, marginBottom: 12 }}>📋</div>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 80 }}>
+          <FileText size={48} strokeWidth={1.5} style={{ color: 'var(--text-muted)', marginBottom: 12 }} />
           <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>No data for {format(new Date(date), 'dd MMM yyyy')}</p>
         </div>
       ) : (
@@ -67,8 +70,9 @@ export default function DailyReport() {
             background: 'rgba(13,148,136,0.08)', border: '1px solid var(--border-bright)',
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           }}>
-            <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--primary-light)' }}>
-              📅 Report for: {format(new Date(date), 'EEEE, dd MMMM yyyy')}
+            <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 15, fontWeight: 700, color: 'var(--primary-light)' }}>
+              <Calendar size={16} />
+              <span>Report for: {format(new Date(date), 'EEEE, dd MMMM yyyy')}</span>
             </span>
             <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>
               Generated: {format(new Date(), 'hh:mm aa')}

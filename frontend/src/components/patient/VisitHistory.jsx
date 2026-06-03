@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ChevronDown, ChevronUp } from 'lucide-react'
+import { ChevronDown, ChevronUp, ClipboardList, Pill, Calendar, PlusCircle } from 'lucide-react'
 import { getVisitHistory } from '../../api/patients'
 import { format } from 'date-fns'
 
@@ -96,7 +96,7 @@ function VisitCard({ visit, index }) {
                       padding: '5px 10px', background: 'var(--bg-700)', borderRadius: 'var(--radius-sm)',
                       fontSize: 12,
                     }}>
-                      <span style={{ color: 'var(--primary-light)' }}>💊</span>
+                      <Pill size={13} style={{ color: 'var(--primary-light)' }} />
                       <span style={{ flex: 1, color: 'var(--text-primary)', fontWeight: 500 }}>
                         {p.medicationName || p.medication?.name}
                       </span>
@@ -115,11 +115,13 @@ function VisitCard({ visit, index }) {
             )}
             {visit.nextVisitDate && (
               <div style={{
+                display: 'flex', alignItems: 'center', gap: 6,
                 marginTop: 12, padding: '6px 10px', borderRadius: 'var(--radius-sm)',
                 background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)',
                 fontSize: 12, color: '#FCD34D',
               }}>
-                📅 Next visit: {format(new Date(visit.nextVisitDate), 'dd MMM yyyy')}
+                <Calendar size={13} />
+                <span>Next visit: {format(new Date(visit.nextVisitDate), 'dd MMM yyyy')}</span>
               </div>
             )}
           </div>
@@ -146,8 +148,9 @@ export default function VisitHistory({ patientId }) {
 
   return (
     <div className="card" style={{ padding: 16 }}>
-      <h3 style={{ margin: '0 0 16px', fontSize: 14, fontWeight: 700, color: 'var(--text-secondary)' }}>
-        📋 Visit History ({visits.length} visit{visits.length !== 1 ? 's' : ''})
+      <h3 style={{ display: 'flex', alignItems: 'center', gap: 6, margin: '0 0 16px', fontSize: 14, fontWeight: 700, color: 'var(--text-secondary)' }}>
+        <ClipboardList size={16} />
+        <span>Visit History ({visits.length} visit{visits.length !== 1 ? 's' : ''})</span>
       </h3>
 
       {loading && (
@@ -157,8 +160,8 @@ export default function VisitHistory({ patientId }) {
       )}
 
       {!loading && visits.length === 0 && (
-        <div style={{ textAlign: 'center', padding: 30 }}>
-          <div style={{ fontSize: 28, marginBottom: 8 }}>🆕</div>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 30, gap: 8 }}>
+          <PlusCircle size={28} strokeWidth={1.5} style={{ color: 'var(--text-muted)' }} />
           <p style={{ color: 'var(--text-muted)', fontSize: 13, margin: 0 }}>No previous visits recorded</p>
         </div>
       )}

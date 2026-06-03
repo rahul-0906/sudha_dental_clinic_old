@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Search, User, Calendar, Phone, MapPin, Activity, Image, FileText, X, ChevronDown, ChevronUp, Upload, Trash2, ZoomIn, FileSpreadsheet, ClipboardList } from 'lucide-react'
+import { Search, User, Calendar, Phone, MapPin, Activity, Image, FileText, X, ChevronDown, ChevronUp, Upload, Trash2, ZoomIn, FileSpreadsheet, ClipboardList, Users, Pill } from 'lucide-react'
 import { searchPatients, getVisitHistory } from '../../api/patients'
 import { getPatientXrays, uploadXray, deleteXray, getXrayFileUrl } from '../../api/misc'
 import { format } from 'date-fns'
@@ -173,8 +173,9 @@ export default function PatientHistoryPage() {
       }}>
         {/* Search Header */}
         <div style={{ padding: 16, borderBottom: '1px solid var(--border)', flexShrink: 0 }}>
-          <h3 style={{ margin: '0 0 12px', fontSize: 14, fontWeight: 700, color: 'var(--text-secondary)' }}>
-            👥 Patient Directory
+          <h3 style={{ display: 'flex', alignItems: 'center', gap: 6, margin: '0 0 12px', fontSize: 14, fontWeight: 700, color: 'var(--text-secondary)' }}>
+            <Users size={16} />
+            <span>Patient Directory</span>
           </h3>
           <div style={{ position: 'relative' }}>
             <Search size={16} style={{
@@ -199,9 +200,9 @@ export default function PatientHistoryPage() {
               Loading patient list...
             </div>
           ) : patients.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)' }}>
-              <div style={{ fontSize: 24, marginBottom: 8 }}>👥</div>
-              No patients found
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 40, color: 'var(--text-muted)', gap: 8 }}>
+              <Users size={28} strokeWidth={1.5} style={{ color: 'var(--text-muted)' }} />
+              <span>No patients found</span>
             </div>
           ) : (
             patients.map((pat) => {
@@ -241,8 +242,9 @@ export default function PatientHistoryPage() {
                     <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {pat.name}
                     </div>
-                    <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 2 }}>
-                      📱 {pat.phone}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: 'var(--text-secondary)', marginTop: 2 }}>
+                      <Phone size={11} />
+                      <span>{pat.phone}</span>
                     </div>
                   </div>
                   {pat.gender && (
@@ -458,9 +460,9 @@ export default function PatientHistoryPage() {
                   Loading clinical data history...
                 </div>
               ) : visits.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)' }}>
-                  <div style={{ fontSize: 32, marginBottom: 12 }}>🆕</div>
-                  No past consultation visits recorded for this patient.
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 40, color: 'var(--text-muted)', gap: 8 }}>
+                  <ClipboardList size={32} strokeWidth={1.5} style={{ color: 'var(--text-muted)' }} />
+                  <span>No past consultation visits recorded for this patient.</span>
                 </div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -592,7 +594,7 @@ export default function PatientHistoryPage() {
                                         fontSize: 12, border: '1px solid var(--border)'
                                       }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                          <span style={{ fontSize: 14 }}>💊</span>
+                                          <Pill size={13} style={{ color: 'var(--primary-light)' }} />
                                           <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{presc.medicationName}</span>
                                         </div>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
@@ -618,7 +620,7 @@ export default function PatientHistoryPage() {
                                   background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.15)',
                                   fontSize: 12, color: '#F59E0B', display: 'flex', alignItems: 'center', gap: 8
                                 }}>
-                                  <span>📅</span>
+                                  <Calendar size={13} />
                                   <span>Next Appointment Scheduled: <strong>{format(new Date(visit.nextVisitDate), 'dd MMM yyyy')}</strong></span>
                                 </div>
                               )}
@@ -665,8 +667,9 @@ export default function PatientHistoryPage() {
             </button>
           </div>
           {lightbox.notes && (
-            <div style={{ color: 'var(--text-secondary)', fontSize: 13, background: 'rgba(0,0,0,0.5)', padding: '6px 14px', borderRadius: 20 }}>
-              📝 {lightbox.notes}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--text-secondary)', fontSize: 13, background: 'rgba(0,0,0,0.5)', padding: '6px 14px', borderRadius: 20 }}>
+              <FileText size={13} />
+              <span>{lightbox.notes}</span>
             </div>
           )}
           <div style={{ color: 'var(--text-muted)', fontSize: 12 }}>

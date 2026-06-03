@@ -1,6 +1,18 @@
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Stethoscope, Package, DollarSign, BarChart3, Bell, LogOut, Menu, X, Users } from 'lucide-react'
+import {
+  LayoutDashboard,
+  Users,
+  Package,
+  DollarSign,
+  BarChart3,
+  Bell,
+  LogOut,
+  Menu,
+  X,
+  User,
+  Stethoscope
+} from 'lucide-react'
 import { setStaffMode, setActiveView } from '../../store/slices/appSlice'
 import { fetchTodayQueue } from '../../store/slices/queueSlice'
 import { getLowStockAlerts } from '../../api/medications'
@@ -12,21 +24,14 @@ import DailyReport from '../finance/DailyReport'
 import PatientHistoryPage from '../patient/PatientHistoryPage'
 import { format } from 'date-fns'
 
-const ToothLogo = () => (
-  <svg width={32} height={32} viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M40 8C28 8 18 16 18 26C18 32 20 38 22 44C24 50 25 60 27 66C28 70 30 72 32 72C34 72 36 68 38 62C39 58 40 54 40 54C40 54 41 58 42 62C44 68 46 72 48 72C50 72 52 70 53 66C55 60 56 50 58 44C60 38 62 32 62 26C62 16 52 8 40 8Z"
-      fill="url(#tg)" />
-    <defs>
-      <linearGradient id="tg" x1="18" y1="8" x2="62" y2="72" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stopColor="#0A9B9E"/>
-        <stop offset="100%" stopColor="#077A7D"/>
-      </linearGradient>
-    </defs>
+export const ToothLogo = ({ size = 28 }) => (
+  <svg width={size} height={size} viewBox="0 0 80 80" fill="none" stroke="var(--primary)" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+    <path d="M40 8C28 8 18 16 18 26C18 32 20 38 22 44C24 50 25 60 27 66C28 70 30 72 32 72C34 72 36 68 38 62C39 58 40 54 40 54C40 54 41 58 42 62C44 68 46 72 48 72C50 72 52 70 53 66C55 60 56 50 58 44C60 38 62 32 62 26C62 16 52 8 40 8Z" />
   </svg>
 )
 
 const navItems = [
-  { id: 'dashboard', label: 'Dashboard', icon: Stethoscope },
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'patients', label: 'Patients', icon: Users },
   { id: 'inventory', label: 'Inventory', icon: Package },
   { id: 'finance', label: 'Finance', icon: DollarSign },
@@ -171,12 +176,23 @@ export default function AppShell() {
 
           {/* Mode Badge */}
           <div style={{
+            display: 'flex', alignItems: 'center', gap: 4,
             padding: '4px 10px', borderRadius: 20, fontSize: 11, fontWeight: 700,
             background: isStaffMode ? 'var(--primary-glow-bright)' : 'rgba(0,0,0,0.05)',
             color: isStaffMode ? 'var(--primary)' : 'var(--text-muted)',
             border: `1px solid ${isStaffMode ? 'var(--border-bright)' : 'transparent'}`,
           }}>
-            {isStaffMode ? '👩‍⚕️ STAFF MODE' : '🩺 SOLO MODE'}
+            {isStaffMode ? (
+              <>
+                <User size={13} strokeWidth={2} />
+                <span>STAFF MODE</span>
+              </>
+            ) : (
+              <>
+                <Stethoscope size={13} strokeWidth={2} />
+                <span>SOLO MODE</span>
+              </>
+            )}
           </div>
 
           {/* Logout */}

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
-import { Plus, Search, Edit2, Package, AlertTriangle } from 'lucide-react'
+import { Plus, Search, Edit2, Package, AlertTriangle, Pill } from 'lucide-react'
 import { getAllMedications, createMedication, updateMedication, getLowStockAlerts } from '../../api/medications'
+import { ToothLogo } from '../layout/AppShell'
 import toast from 'react-hot-toast'
 
 const EMPTY_FORM = { name: '', category: 'MEDICINE', unit: 'Tablet', currentStock: 0, reorderLevel: 10, unitCostPrice: '', unitSellingPrice: '' }
@@ -32,8 +33,9 @@ function MedModal({ med, onClose, onSave }) {
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
       onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className="glass" style={{ width: '100%', maxWidth: 480, borderRadius: 'var(--radius-xl)', padding: 28, boxShadow: '0 25px 60px rgba(0,0,0,0.5)', animation: 'slideIn 0.3s ease' }}>
-        <h2 style={{ margin: '0 0 20px', fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>
-          {med ? '✏️ Edit Medicine' : '➕ Add Medicine'}
+        <h2 style={{ display: 'flex', alignItems: 'center', gap: 6, margin: '0 0 20px', fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>
+          {med ? <Edit2 size={18} style={{ color: 'var(--primary)' }} /> : <Plus size={18} style={{ color: 'var(--primary)' }} />}
+          <span>{med ? 'Edit Medicine' : 'Add Medicine'}</span>
         </h2>
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <input className="input-field" placeholder="Medicine name *" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} style={{ boxSizing: 'border-box' }} />
@@ -117,8 +119,9 @@ export default function InventoryPage() {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
         <div>
-          <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
-            📦 Inventory
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: 8, margin: 0, fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
+            <Package size={20} style={{ color: 'var(--primary)' }} />
+            <span>Inventory</span>
           </h2>
           <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
             {meds.length} medicines · {lowStockCount} low stock alerts
@@ -138,7 +141,7 @@ export default function InventoryPage() {
           display: 'flex', alignItems: 'center', gap: 10, fontSize: 13, color: '#FCD34D',
         }}>
           <AlertTriangle size={16} color="#F59E0B" />
-          <span>⚠️ <strong>{lowStockCount}</strong> items are running low on stock and need reordering.</span>
+          <span><strong>{lowStockCount}</strong> items are running low on stock and need reordering.</span>
         </div>
       )}
 
@@ -151,12 +154,16 @@ export default function InventoryPage() {
         <div style={{ display: 'flex', gap: 4 }}>
           {['ALL', 'DENTAL', 'MEDICINE', 'LOW'].map(f => (
             <button key={f} onClick={() => setFilter(f)} style={{
+              display: 'flex', alignItems: 'center', gap: 6,
               padding: '7px 14px', borderRadius: 'var(--radius-sm)', fontSize: 12, fontWeight: 600, cursor: 'pointer',
               background: filter === f ? 'rgba(13,148,136,0.2)' : 'rgba(255,255,255,0.04)',
               border: filter === f ? '1px solid var(--border-bright)' : '1px solid var(--border)',
               color: filter === f ? 'var(--primary-light)' : 'var(--text-muted)',
             }}>
-              {f === 'LOW' ? '⚠️ Low' : f === 'ALL' ? 'All' : f === 'DENTAL' ? '🦷 Dental' : '💊 Medicine'}
+              {f === 'LOW' && <AlertTriangle size={12} />}
+              {f === 'DENTAL' && <ToothLogo size={12} />}
+              {f === 'MEDICINE' && <Pill size={12} />}
+              <span>{f === 'LOW' ? 'Low' : f === 'ALL' ? 'All' : f === 'DENTAL' ? 'Dental' : 'Medicine'}</span>
             </button>
           ))}
         </div>

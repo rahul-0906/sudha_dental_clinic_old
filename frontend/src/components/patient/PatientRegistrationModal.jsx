@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { X } from 'lucide-react'
+import { X, Check, UserPlus } from 'lucide-react'
 import { registerPatient } from '../../api/patients'
 import { setSelectedPatient } from '../../store/slices/patientSlice'
 import { addToQueue } from '../../api/visits'
@@ -74,8 +74,9 @@ export default function PatientRegistrationModal({ onClose }) {
       }}>
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
-          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>
-            🦷 Register New Patient
+          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <UserPlus size={18} style={{ color: 'var(--primary)' }} />
+            <span>Register New Patient</span>
           </h2>
           <button onClick={onClose} style={{
             marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer',
@@ -157,8 +158,13 @@ export default function PatientRegistrationModal({ onClose }) {
             <button type="button" onClick={onClose} className="btn-secondary" style={{ flex: 1 }}>
               Cancel
             </button>
-            <button type="submit" disabled={loading} className="btn-primary" style={{ flex: 2 }}>
-              {loading ? 'Registering...' : addQueue ? '✅ Register & Add to Queue' : '✅ Register Patient'}
+            <button type="submit" disabled={loading} className="btn-primary" style={{ flex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+              {loading ? 'Registering...' : (
+                <>
+                  <Check size={16} />
+                  <span>{addQueue ? 'Register & Add to Queue' : 'Register Patient'}</span>
+                </>
+              )}
             </button>
           </div>
         </form>

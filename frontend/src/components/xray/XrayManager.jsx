@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { Upload, X, ZoomIn } from 'lucide-react'
+import { Upload, X, ZoomIn, Image, FileText } from 'lucide-react'
 import { uploadXray, getPatientXrays, getXrayFileUrl, deleteXray } from '../../api/misc'
 import toast from 'react-hot-toast'
 import { format } from 'date-fns'
@@ -44,7 +44,7 @@ export default function XrayManager({ patientId, visitId }) {
       formData.append('file', file)
 
       await uploadXray(formData)
-      toast.success('X-ray uploaded successfully! 🦷')
+      toast.success('X-ray uploaded successfully!')
       setNotes('')
       fileRef.current.value = ''
       await loadXrays()
@@ -71,8 +71,9 @@ export default function XrayManager({ patientId, visitId }) {
 
   return (
     <div className="card" style={{ padding: 16 }}>
-      <h3 style={{ margin: '0 0 14px', fontSize: 14, fontWeight: 700, color: 'var(--text-secondary)' }}>
-        🦷 RVG X-Rays ({xrays.length})
+      <h3 style={{ display: 'flex', alignItems: 'center', gap: 6, margin: '0 0 14px', fontSize: 14, fontWeight: 700, color: 'var(--text-secondary)' }}>
+        <Image size={16} />
+        <span>RVG X-Rays ({xrays.length})</span>
       </h3>
 
       {/* Upload Zone */}
@@ -89,7 +90,7 @@ export default function XrayManager({ patientId, visitId }) {
         >
           <Upload size={22} color="var(--primary-light)" style={{ marginBottom: 6 }} />
           <div style={{ fontSize: 13, color: 'var(--text-secondary)', fontWeight: 500 }}>
-            {uploading ? '⏳ Uploading...' : 'Click or drop X-ray image here'}
+            {uploading ? 'Uploading...' : 'Click or drop X-ray image here'}
           </div>
           <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>
             JPG, PNG · Max 20MB
@@ -172,7 +173,10 @@ export default function XrayManager({ patientId, visitId }) {
             onClick={(e) => e.stopPropagation()}
           />
           {lightbox.notes && (
-            <div style={{ color: 'var(--text-secondary)', fontSize: 13 }}>📝 {lightbox.notes}</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--text-secondary)', fontSize: 13 }}>
+              <FileText size={14} />
+              <span>{lightbox.notes}</span>
+            </div>
           )}
           <div style={{ color: 'var(--text-muted)', fontSize: 12 }}>
             {lightbox.uploadedAt ? format(new Date(lightbox.uploadedAt), 'dd MMM yyyy, hh:mm aa') : ''} · Click outside to close

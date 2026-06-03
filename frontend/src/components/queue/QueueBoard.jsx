@@ -4,14 +4,14 @@ import { fetchTodayQueue, updateVisitStatusThunk } from '../../store/slices/queu
 import { setSelectedPatient } from '../../store/slices/patientSlice'
 import { getPatientById } from '../../api/patients'
 import { format, formatDistanceToNow } from 'date-fns'
-import { RefreshCw } from 'lucide-react'
+import { RefreshCw, Stethoscope, CreditCard, CheckCircle, ListOrdered, Clock } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 const STATUS_CONFIG = {
-  WAITING: { label: 'Waiting', color: '#F59E0B', bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.3)', emoji: '⏳' },
-  CONSULTATION: { label: 'Consultation', color: '#3B82F6', bg: 'rgba(59,130,246,0.1)', border: 'rgba(59,130,246,0.3)', emoji: '🩺' },
-  CHECKOUT: { label: 'Checkout', color: '#A855F7', bg: 'rgba(168,85,247,0.1)', border: 'rgba(168,85,247,0.3)', emoji: '💊' },
-  DONE: { label: 'Done', color: '#10B981', bg: 'rgba(16,185,129,0.1)', border: 'rgba(16,185,129,0.3)', emoji: '✅' },
+  WAITING: { label: 'Waiting', color: '#F59E0B', bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.3)', icon: Clock },
+  CONSULTATION: { label: 'Consultation', color: '#3B82F6', bg: 'rgba(59,130,246,0.1)', border: 'rgba(59,130,246,0.3)', icon: Stethoscope },
+  CHECKOUT: { label: 'Checkout', color: '#A855F7', bg: 'rgba(168,85,247,0.1)', border: 'rgba(168,85,247,0.3)', icon: CreditCard },
+  DONE: { label: 'Done', color: '#10B981', bg: 'rgba(16,185,129,0.1)', border: 'rgba(16,185,129,0.3)', icon: CheckCircle },
 }
 
 function PatientCard({ visit, onSelect, compact, staffView }) {
@@ -83,10 +83,12 @@ function PatientCard({ visit, onSelect, compact, staffView }) {
               {visit.patient?.name || 'Unknown'}
             </span>
             <span style={{
+              display: 'inline-flex', alignItems: 'center', gap: 4,
               fontSize: 11, fontWeight: 700, padding: '1px 6px', borderRadius: 8,
               background: sc.bg, border: `1px solid ${sc.border}`, color: sc.color, flexShrink: 0,
             }}>
-              {sc.emoji} {sc.label}
+              {sc.icon && <sc.icon size={11} />}
+              {sc.label}
             </span>
           </div>
           {!compact && (
@@ -109,9 +111,11 @@ function PatientCard({ visit, onSelect, compact, staffView }) {
               style={{
                 flex: 1, padding: '8px 0', borderRadius: 'var(--radius-sm)', fontSize: 14, fontWeight: 600,
                 background: 'rgba(59,130,246,0.15)', border: '1px solid rgba(59,130,246,0.3)', color: 'var(--primary)', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6
               }}
             >
-              🩺 Start Consult
+              <Stethoscope size={14} />
+              <span>Start Consult</span>
             </button>
           )}
           {visit.status === 'CONSULTATION' && (
@@ -120,9 +124,11 @@ function PatientCard({ visit, onSelect, compact, staffView }) {
               style={{
                 flex: 1, padding: '8px 0', borderRadius: 'var(--radius-sm)', fontSize: 14, fontWeight: 600,
                 background: 'rgba(168,85,247,0.15)', border: '1px solid rgba(168,85,247,0.3)', color: '#A855F7', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6
               }}
             >
-              💊 Move to Checkout
+              <CreditCard size={14} />
+              <span>Move to Checkout</span>
             </button>
           )}
           {visit.status === 'CHECKOUT' && (
@@ -131,9 +137,11 @@ function PatientCard({ visit, onSelect, compact, staffView }) {
               style={{
                 flex: 1, padding: '8px 0', borderRadius: 'var(--radius-sm)', fontSize: 14, fontWeight: 600,
                 background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.3)', color: '#34D399', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6
               }}
             >
-              ✅ Mark Done
+              <CheckCircle size={14} />
+              <span>Mark Done</span>
             </button>
           )}
         </div>
@@ -171,15 +179,16 @@ export default function QueueBoard({ compact, staffView }) {
         </div>
         {loading && <div style={{ textAlign: 'center', padding: 20, color: 'var(--text-muted)', fontSize: 15 }}>Loading...</div>}
         {!loading && activeQueue.length === 0 && (
-          <div style={{ textAlign: 'center', padding: 30, color: 'var(--text-muted)', fontSize: 15 }}>
-            <div style={{ fontSize: 28, marginBottom: 6 }}>🏥</div>
-            Queue is empty
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 30, color: 'var(--text-muted)', fontSize: 15, gap: 8 }}>
+            <ListOrdered size={28} strokeWidth={1.5} style={{ color: 'var(--text-muted)' }} />
+            <span>Queue is empty</span>
           </div>
         )}
         {activeQueue.map(v => <PatientCard key={v.id} visit={v} compact={compact} staffView={staffView} />)}
         {done.length > 0 && (
-          <div style={{ fontSize: 13, color: 'var(--text-muted)', textAlign: 'center', marginTop: 8, padding: '6px 0', borderTop: '1px solid var(--border)' }}>
-            ✅ {done.length} patient{done.length !== 1 ? 's' : ''} seen today
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, fontSize: 13, color: 'var(--text-muted)', textAlign: 'center', marginTop: 8, padding: '6px 0', borderTop: '1px solid var(--border)' }}>
+            <CheckCircle size={14} style={{ color: 'var(--success)' }} />
+            <span>{done.length} patient{done.length !== 1 ? 's' : ''} seen today</span>
           </div>
         )}
       </div>
@@ -227,8 +236,9 @@ export default function QueueBoard({ compact, staffView }) {
             </div>
             <div style={{ flex: 1, overflowY: 'auto', padding: 10 }}>
               {col.data.length === 0 && (
-                <div style={{ textAlign: 'center', padding: '24px 12px', color: 'var(--text-muted)', fontSize: 12 }}>
-                  {col.emoji} Empty
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px 12px', color: 'var(--text-muted)', fontSize: 12, gap: 6 }}>
+                  {col.icon && <col.icon size={16} strokeWidth={1.5} />}
+                  <span>Empty</span>
                 </div>
               )}
               {col.data.map(v => <PatientCard key={v.id} visit={v} />)}
