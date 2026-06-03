@@ -11,12 +11,14 @@ export default function DoctorPanel() {
 
   if (!selectedPatient) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 12 }}>
-        <ToothLogo size={56} />
-        <h3 style={{ color: 'var(--text-secondary)', margin: 0, fontWeight: 600 }}>
+      <div className="flex flex-col items-center justify-center h-full w-full text-center p-6 bg-white">
+        <div className="text-teal-600 mb-4">
+          <ToothLogo size={56} />
+        </div>
+        <h3 className="text-slate-700 font-semibold text-lg mb-2">
           No Patient Selected
         </h3>
-        <p style={{ color: 'var(--text-muted)', fontSize: 13, textAlign: 'center', maxWidth: 240 }}>
+        <p className="text-slate-500 text-sm max-w-[280px]">
           Staff will assign a patient to consultation. Their details will appear here.
         </p>
       </div>

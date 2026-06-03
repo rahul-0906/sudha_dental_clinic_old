@@ -74,9 +74,9 @@ export default function AppShell() {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
+    <div className="w-full h-screen flex flex-col overflow-hidden bg-white">
       {/* TOP NAV BAR */}
-      <header className={`flex items-center justify-between px-6 border-b border-slate-200 bg-white shrink-0 z-50 rounded-none transition-all duration-200 ${isStaffMode ? 'h-[72px]' : 'h-14'}`}>
+      <header className={`w-full shrink-0 border-b border-slate-200 flex items-center justify-between px-6 bg-white z-50 rounded-none transition-all duration-200 ${isStaffMode ? 'h-[72px]' : 'h-14'}`}>
         {/* Logo + Name */}
         <div className="flex items-center gap-3 shrink-0">
           <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-teal-50 border border-teal-100 text-teal-600 shrink-0">
@@ -195,16 +195,8 @@ export default function AppShell() {
       </header>
 
       {/* MAIN CONTENT */}
-      <main className="flex-1 overflow-hidden bg-slate-50 flex flex-col">
-        {!isStaffMode ? (
-          <div className="flex-1 max-w-6xl w-full mx-auto p-4 overflow-hidden flex flex-col">
-            {renderContent()}
-          </div>
-        ) : (
-          <div className="flex-1 w-full overflow-hidden flex flex-col">
-            {renderContent()}
-          </div>
-        )}
+      <main className="flex flex-1 overflow-hidden w-full bg-slate-50">
+        {renderContent()}
       </main>
     </div>
   )

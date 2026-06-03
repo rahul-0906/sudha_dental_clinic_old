@@ -18,41 +18,39 @@ export default function SoloLayout() {
   const checkoutPatients = queue.filter(v => v.status === 'CHECKOUT')
 
   return (
-    <div style={{ display: 'flex', height: '100%', overflow: 'hidden' }}>
+    <div className="flex w-full h-full overflow-hidden">
       {/* Left: Patient Search + Queue */}
-      <div style={{
-        width: 260, borderRight: '1px solid var(--border)', display: 'flex',
-        flexDirection: 'column', overflow: 'hidden', background: 'var(--bg-800)', flexShrink: 0,
-      }}>
-        <div style={{ padding: 16, borderBottom: '1px solid var(--border)', flexShrink: 0 }}>
+      <div className="w-[320px] shrink-0 border-r border-slate-200 bg-slate-50/50 flex flex-col h-full overflow-y-auto">
+        <div className="p-4 border-b border-slate-200 shrink-0">
           <PatientSearch />
           <button
             onClick={() => setShowRegModal(true)}
-            className="btn-secondary"
-            style={{ width: '100%', marginTop: 10, fontSize: 16, padding: '10px 12px', fontWeight: 600 }}
+            className="btn-secondary w-full mt-2.5 text-base py-2 px-3 font-semibold"
           >
             + Register New Patient
           </button>
         </div>
-        <div style={{ flex: 1, overflow: 'auto', padding: 16 }}>
+        <div className="flex-1 overflow-y-auto p-4">
           <QueueBoard compact />
         </div>
       </div>
 
       {/* Right: Unified Workspace */}
-      <div style={{ flex: 1, overflow: 'auto', padding: 20 }}>
+      <div className="flex-1 bg-white flex flex-col h-full overflow-y-auto w-full">
         {!selectedPatient ? (
-          <div style={{ textAlign: 'center', paddingTop: 80, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <ToothLogo size={48} />
-            <h2 style={{ color: 'var(--text-secondary)', fontWeight: 600, marginBottom: 8 }}>
+          <div className="flex flex-col items-center justify-center h-full w-full text-center p-6">
+            <div className="text-teal-600 mb-4">
+              <ToothLogo size={48} />
+            </div>
+            <h2 className="text-slate-700 font-semibold text-xl mb-2">
               Select a Patient to Begin
             </h2>
-            <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>
+            <p className="text-slate-500 text-sm">
               Search for a patient or select one from the queue
             </p>
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          <div className="p-6 flex flex-col gap-6">
             {/* Patient Header */}
             <div className="card" style={{ padding: 16, display: 'flex', alignItems: 'center', gap: 16 }}>
               <div style={{
