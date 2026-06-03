@@ -76,9 +76,9 @@ export default function AppShell() {
   return (
     <div className="w-full h-screen flex flex-col overflow-hidden bg-white">
       {/* TOP NAV BAR */}
-      <header className={`w-full shrink-0 border-b border-slate-200 flex items-center justify-between px-6 bg-white z-50 rounded-none transition-all duration-200 ${isStaffMode ? 'h-[72px]' : 'h-14'}`}>
+      <header className={`w-full shrink-0 border-b border-slate-200 flex items-center justify-between px-6 bg-white z-50 rounded-none transition-all duration-200 gap-8 ${isStaffMode ? 'h-[72px]' : 'h-14'}`}>
         {/* Logo + Name */}
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-3 shrink-0 min-w-max">
           <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-teal-50 border border-teal-100 text-teal-600 shrink-0">
             <ToothLogo size={22} />
           </div>
@@ -93,7 +93,7 @@ export default function AppShell() {
         </div>
 
         {/* Nav Links */}
-        <nav className="flex items-center gap-6 mx-auto">
+        <nav className="flex flex-1 items-center justify-center gap-6 overflow-x-auto no-scrollbar">
           {navItems.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
