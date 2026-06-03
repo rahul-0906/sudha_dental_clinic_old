@@ -4,8 +4,16 @@ import { searchPatients, getVisitHistory } from '../../api/patients'
 import { getPatientXrays, uploadXray, deleteXray, getXrayFileUrl } from '../../api/misc'
 import { format } from 'date-fns'
 import toast from 'react-hot-toast'
+import { useDispatch, useSelector } from 'react-redux'
+import { setActiveView } from '../../store/slices/appSlice'
+import { setSelectedPatient } from '../../store/slices/patientSlice'
+import { fetchTodayQueue } from '../../store/slices/queueSlice'
+import { addToQueue, updateVisitStatus } from '../../api/visits'
 
 export default function PatientHistoryPage() {
+  const dispatch = useDispatch()
+  const isStaffMode = useSelector((state) => state.app.isStaffAvailable)
+  const queue = useSelector((state) => state.queue.queue)
   const [query, setQuery] = useState('')
   const [patients, setPatients] = useState([])
   const [loadingList, setLoadingList] = useState(false)
@@ -136,6 +144,39 @@ export default function PatientHistoryPage() {
       setXrays(xrays.filter(x => x.id !== id))
     } catch (err) {
       toast.error('Failed to delete X-ray')
+    }
+  }
+
+  const handleQueueFromDirectory = async () => {
+    if (!selectedPat) return
+    try {
+      const existingVisit = queue.find(v => v.patient?.id === selectedPat.id && v.status !== 'DONE')
+      if (!isStaffMode) {
+        // Solo Mode
+        if (existingVisit) {
+          if (existingVisit.status === 'WAITING') {
+            await updateVisitStatus(existingVisit.id, 'CONSULTATION')
+          }
+        } else {
+          const res = await addToQueue(selectedPat.id)
+          const newVisit = res.data
+          await updateVisitStatus(newVisit.id, 'CONSULTATION')
+        }
+        toast.success(`Consultation started for ${selectedPat.name}`)
+      } else {
+        // Staff Mode
+        if (!existingVisit) {
+          await addToQueue(selectedPat.id)
+          toast.success(`${selectedPat.name} added to queue!`)
+        } else {
+          toast.success(`${selectedPat.name} is already in the queue`)
+        }
+      }
+      dispatch(fetchTodayQueue())
+      dispatch(setSelectedPatient(selectedPat))
+      dispatch(setActiveView('dashboard'))
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to queue patient')
     }
   }
 
@@ -287,9 +328,18 @@ export default function PatientHistoryPage() {
               </div>
 
               <div style={{ flex: 1, minWidth: 200 }}>
-                <h2 style={{ margin: '0 0 6px', fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
-                  {selectedPat.name}
-                </h2>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+                  <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
+                    {selectedPat.name}
+                  </h2>
+                  <button
+                    onClick={handleQueueFromDirectory}
+                    className="btn-primary"
+                    style={{ fontSize: 13, padding: '8px 16px', display: 'flex', alignItems: 'center', gap: 6 }}
+                  >
+                    {isStaffMode ? '+ Add to Queue' : 'Start Consultation'}
+                  </button>
+                </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 8, marginTop: 12 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-secondary)' }}>
                     <Phone size={14} color="var(--primary-light)" />
