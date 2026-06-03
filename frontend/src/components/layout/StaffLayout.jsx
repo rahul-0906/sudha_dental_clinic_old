@@ -1,13 +1,13 @@
 import { useSelector } from 'react-redux'
-import NursePanel from './NursePanel'
+import StaffPanel from './StaffPanel'
 import DoctorPanel from './DoctorPanel'
 
-export default function NurseLayout() {
+export default function StaffLayout() {
   return (
     <div style={{ display: 'flex', height: '100%', overflow: 'hidden' }}>
-      {/* Nurse Panel — Left 32% */}
+      {/* Staff Panel — Left 25% */}
       <div style={{
-        width: '32%', borderRight: '1px solid var(--border)',
+        width: '25%', borderRight: '1px solid var(--border)',
         display: 'flex', flexDirection: 'column', overflow: 'hidden',
         background: 'var(--bg-800)',
       }}>
@@ -16,7 +16,7 @@ export default function NurseLayout() {
           display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0,
         }}>
           <span style={{ fontSize: 16 }}>👩‍⚕️</span>
-          <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--primary-light)' }}>NURSE STATION</span>
+          <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--primary-light)' }}>STAFF STATION</span>
           <span style={{
             marginLeft: 'auto', fontSize: 11, color: 'var(--text-muted)',
             background: 'rgba(13,148,136,0.1)', padding: '2px 8px', borderRadius: 10,
@@ -26,7 +26,7 @@ export default function NurseLayout() {
           </span>
         </div>
         <div style={{ flex: 1, overflow: 'auto' }}>
-          <NursePanel />
+          <StaffPanel />
         </div>
       </div>
 

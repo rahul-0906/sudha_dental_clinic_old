@@ -15,7 +15,7 @@ export default function DoctorPanel() {
           No Patient Selected
         </h3>
         <p style={{ color: 'var(--text-muted)', fontSize: 13, textAlign: 'center', maxWidth: 240 }}>
-          Nurse will assign a patient to consultation. Their details will appear here.
+          Staff will assign a patient to consultation. Their details will appear here.
         </p>
       </div>
     )

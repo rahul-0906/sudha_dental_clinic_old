@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Stethoscope, Package, DollarSign, BarChart3, Bell, LogOut, Menu, X, Users } from 'lucide-react'
-import { setNurseMode, setActiveView } from '../../store/slices/appSlice'
+import { setStaffMode, setActiveView } from '../../store/slices/appSlice'
 import { fetchTodayQueue } from '../../store/slices/queueSlice'
 import { getLowStockAlerts } from '../../api/medications'
-import NurseLayout from './NurseLayout'
+import StaffLayout from './StaffLayout'
 import SoloLayout from './SoloLayout'
 import InventoryPage from '../inventory/InventoryPage'
 import FinancialLedger from '../finance/FinancialLedger'
@@ -35,7 +35,7 @@ const navItems = [
 
 export default function AppShell() {
   const dispatch = useDispatch()
-  const isNurseMode = useSelector((state) => state.app.isNurseAvailable)
+  const isStaffMode = useSelector((state) => state.app.isStaffAvailable)
   const activeView = useSelector((state) => state.app.activeView)
   const [now, setNow] = useState(new Date())
   const [lowStockCount, setLowStockCount] = useState(0)
@@ -64,7 +64,7 @@ export default function AppShell() {
       case 'inventory': return <InventoryPage />
       case 'finance': return <FinancialLedger />
       case 'report': return <DailyReport />
-      default: return isNurseMode ? <NurseLayout /> : <SoloLayout />
+      default: return isStaffMode ? <StaffLayout /> : <SoloLayout />
     }
   }
 
@@ -144,39 +144,39 @@ export default function AppShell() {
             </div>
           </div>
 
-          {/* Nurse/Solo Toggle */}
+          {/* Staff/Solo Toggle */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 500 }}>SOLO</span>
             <button
-              onClick={() => dispatch(setNurseMode(!isNurseMode))}
+              onClick={() => dispatch(setStaffMode(!isStaffMode))}
               style={{
                 width: 48, height: 26, borderRadius: 13, position: 'relative',
-                background: isNurseMode ? 'var(--primary)' : 'rgba(255,255,255,0.1)',
+                background: isStaffMode ? 'var(--primary)' : 'rgba(255,255,255,0.1)',
                 border: 'none', cursor: 'pointer', transition: 'background 0.3s',
-                boxShadow: isNurseMode ? '0 0 12px rgba(13,148,136,0.4)' : 'none',
+                boxShadow: isStaffMode ? '0 0 12px rgba(13,148,136,0.4)' : 'none',
               }}
-              title={isNurseMode ? 'Switch to Solo Mode' : 'Switch to Nurse Mode'}
+              title={isStaffMode ? 'Switch to Solo Mode' : 'Switch to Staff Mode'}
             >
               <span style={{
-                position: 'absolute', top: 3, left: isNurseMode ? 26 : 3,
+                position: 'absolute', top: 3, left: isStaffMode ? 26 : 3,
                 width: 20, height: 20, borderRadius: '50%', background: 'white',
                 transition: 'left 0.3s cubic-bezier(0.4,0,0.2,1)',
                 boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
               }} />
             </button>
-            <span style={{ fontSize: 11, color: isNurseMode ? 'var(--primary)' : 'var(--text-muted)', fontWeight: 600 }}>
-              NURSE
+            <span style={{ fontSize: 11, color: isStaffMode ? 'var(--primary)' : 'var(--text-muted)', fontWeight: 600 }}>
+              STAFF
             </span>
           </div>
 
           {/* Mode Badge */}
           <div style={{
             padding: '4px 10px', borderRadius: 20, fontSize: 11, fontWeight: 700,
-            background: isNurseMode ? 'var(--primary-glow-bright)' : 'rgba(0,0,0,0.05)',
-            color: isNurseMode ? 'var(--primary)' : 'var(--text-muted)',
-            border: `1px solid ${isNurseMode ? 'var(--border-bright)' : 'transparent'}`,
+            background: isStaffMode ? 'var(--primary-glow-bright)' : 'rgba(0,0,0,0.05)',
+            color: isStaffMode ? 'var(--primary)' : 'var(--text-muted)',
+            border: `1px solid ${isStaffMode ? 'var(--border-bright)' : 'transparent'}`,
           }}>
-            {isNurseMode ? '👩‍⚕️ NURSE MODE' : '🩺 SOLO MODE'}
+            {isStaffMode ? '👩‍⚕️ STAFF MODE' : '🩺 SOLO MODE'}
           </div>
 
           {/* Logout */}

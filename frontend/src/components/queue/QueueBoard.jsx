@@ -14,7 +14,7 @@ const STATUS_CONFIG = {
   DONE: { label: 'Done', color: '#10B981', bg: 'rgba(16,185,129,0.1)', border: 'rgba(16,185,129,0.3)', emoji: '✅' },
 }
 
-function PatientCard({ visit, onSelect, compact, nurseView }) {
+function PatientCard({ visit, onSelect, compact, staffView }) {
   const dispatch = useDispatch()
   const sc = STATUS_CONFIG[visit.status] || STATUS_CONFIG.WAITING
   const [elapsed, setElapsed] = useState('')
@@ -142,7 +142,7 @@ function PatientCard({ visit, onSelect, compact, nurseView }) {
   )
 }
 
-export default function QueueBoard({ compact, nurseView }) {
+export default function QueueBoard({ compact, staffView }) {
   const dispatch = useDispatch()
   const { queue, loading } = useSelector((state) => state.queue)
 
@@ -176,7 +176,7 @@ export default function QueueBoard({ compact, nurseView }) {
             Queue is empty
           </div>
         )}
-        {activeQueue.map(v => <PatientCard key={v.id} visit={v} compact={compact} nurseView={nurseView} />)}
+        {activeQueue.map(v => <PatientCard key={v.id} visit={v} compact={compact} staffView={staffView} />)}
         {done.length > 0 && (
           <div style={{ fontSize: 13, color: 'var(--text-muted)', textAlign: 'center', marginTop: 8, padding: '6px 0', borderTop: '1px solid var(--border)' }}>
             ✅ {done.length} patient{done.length !== 1 ? 's' : ''} seen today

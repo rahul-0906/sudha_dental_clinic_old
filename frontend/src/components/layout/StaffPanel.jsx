@@ -5,7 +5,7 @@ import PatientRegistrationModal from '../patient/PatientRegistrationModal'
 import QueueBoard from '../queue/QueueBoard'
 import CheckoutPanel from '../checkout/CheckoutPanel'
 
-export default function NursePanel() {
+export default function StaffPanel() {
   const [showRegModal, setShowRegModal] = useState(false)
   const [activeTab, setActiveTab] = useState('queue')
   const queue = useSelector((state) => state.queue.queue)
@@ -45,7 +45,7 @@ export default function NursePanel() {
 
       {activeTab === 'queue' ? (
         <div style={{ flex: 1, overflow: 'auto' }}>
-          <QueueBoard compact nurseView />
+          <QueueBoard compact staffView />
         </div>
       ) : (
         <div style={{ flex: 1, overflow: 'auto' }}>

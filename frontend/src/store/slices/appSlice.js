@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-  isNurseAvailable: localStorage.getItem('isNurseAvailable') === 'true',
+  isStaffAvailable: localStorage.getItem('isStaffAvailable') === 'true',
   isAuthenticated: false,
   activeView: localStorage.getItem('activeView') || 'dashboard',
   lowStockCount: 0,
@@ -11,9 +11,9 @@ const appSlice = createSlice({
   name: 'app',
   initialState,
   reducers: {
-    setNurseMode: (state, action) => {
-      state.isNurseAvailable = action.payload
-      localStorage.setItem('isNurseAvailable', action.payload)
+    setStaffMode: (state, action) => {
+      state.isStaffAvailable = action.payload
+      localStorage.setItem('isStaffAvailable', action.payload)
     },
     setAuthenticated: (state, action) => {
       state.isAuthenticated = action.payload
@@ -28,5 +28,5 @@ const appSlice = createSlice({
   },
 })
 
-export const { setNurseMode, setAuthenticated, setActiveView, setLowStockCount } = appSlice.actions
+export const { setStaffMode, setAuthenticated, setActiveView, setLowStockCount } = appSlice.actions
 export default appSlice.reducer
