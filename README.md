@@ -51,11 +51,11 @@ A premium, modern Clinic Management System designed for **Sudha Dental Clinic, S
 - **Styling**: Modern CSS variables, HSL color palettes, Light Theme accent (`#077A7D`), responsive grid structures.
 
 ### Backend
-- **Core Framework**: Spring Boot 3.2.x (Java 17)
+- **Core Framework**: Spring Boot 3.2.x (Java 23+)
 - **Persistence**: Spring Data JPA & Hibernate
-- **Database**: PostgreSQL
+- **Database**: PostgreSQL (v18+)
 - **Scheduling**: Spring Scheduling
-- **Build Tool**: Apache Maven
+- **Build Tool**: Apache Maven (v3.9.16+)
 
 ---
 
@@ -103,10 +103,10 @@ A premium, modern Clinic Management System designed for **Sudha Dental Clinic, S
 ## 🚀 Setting Up the Application
 
 ### Prerequisites
-- **Java**: JDK 17
-- **Node.js**: v18 or later
-- **Database**: PostgreSQL 15+ (Ensure PostgreSQL is running locally)
-- **Build Tools**: Maven 3.8+ & npm
+- **Java**: JDK 23+
+- **Node.js**: Node.js 24+
+- **Database**: PostgreSQL 18+ (Ensure PostgreSQL is running locally)
+- **Build Tools**: Maven 3.9.16+ & npm
 
 ### Database Initialization
 Create a blank database in PostgreSQL named `sudha_clinic`:
