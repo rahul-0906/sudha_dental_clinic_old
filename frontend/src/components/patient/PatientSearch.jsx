@@ -107,8 +107,7 @@ export default function PatientSearch() {
           onChange={(e) => handleSearch(e.target.value)}
           onFocus={() => query && setOpen(true)}
           placeholder="Search patient by name or phone..."
-          className="input-field"
-          style={{ paddingLeft: 38, paddingRight: 36, width: '100%', boxSizing: 'border-box', fontSize: '16px' }}
+          className="w-full h-10 bg-white border border-slate-200 rounded-lg pl-10 pr-10 text-sm focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-shadow"
         />
         {query && (
           <button onClick={clear} style={{

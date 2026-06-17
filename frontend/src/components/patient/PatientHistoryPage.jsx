@@ -231,8 +231,7 @@ export default function PatientHistoryPage() {
                 value={query}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 placeholder="Search by name or phone..."
-                className="input-field"
-                style={{ paddingLeft: 38, width: '100%', boxSizing: 'border-box' }}
+                className="w-full h-10 bg-white border border-slate-200 rounded-lg pl-10 pr-4 text-sm focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-shadow"
               />
             </div>
             <button

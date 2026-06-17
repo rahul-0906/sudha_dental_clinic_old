@@ -13,7 +13,10 @@ export default function StaffPanel() {
   const checkoutPatients = queue.filter(v => v.status === 'CHECKOUT')
 
   return (
-    <div className="p-4 flex flex-col gap-4 h-full overflow-hidden">
+    <div className="p-5 flex flex-col gap-5 h-full overflow-hidden">
+      {/* Structural Header */}
+      <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Queue Management</h2>
+
       {/* Search & Register Patient 2-Column Row */}
       <div className="flex items-center gap-2 w-full shrink-0">
         <div className="flex-1 min-w-0">
@@ -22,7 +25,7 @@ export default function StaffPanel() {
         <button
           type="button"
           onClick={() => setShowRegModal(true)}
-          className="flex items-center justify-center shrink-0 w-10 h-10 bg-teal-50 text-teal-700 border border-teal-200 rounded-lg hover:bg-teal-100 transition-colors cursor-pointer"
+          className="flex items-center justify-center shrink-0 w-10 h-10 bg-white text-teal-600 border border-slate-200 rounded-lg shadow-sm hover:bg-slate-50 hover:text-teal-700 transition-colors cursor-pointer"
           title="Register New Patient"
         >
           <UserPlus size={20} strokeWidth={1.5} />
@@ -61,6 +64,9 @@ export default function StaffPanel() {
           </button>
         ))}
       </div>
+
+      {/* Section Divider */}
+      <hr className="border-slate-200" />
 
       {activeTab === 'queue' ? (
         <div className="flex-1 overflow-y-auto">
