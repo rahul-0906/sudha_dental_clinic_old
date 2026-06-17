@@ -24,30 +24,41 @@ function ExpenseModal({ onClose, onSave }) {
   }
 
   return (
-    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
-      onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="glass" style={{ width: '100%', maxWidth: 420, borderRadius: 'var(--radius-xl)', padding: 28, boxShadow: '0 25px 60px rgba(0,0,0,0.5)', animation: 'slideIn 0.3s ease' }}>
-        <h2 style={{ display: 'flex', alignItems: 'center', gap: 6, margin: '0 0 20px', fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>
-          <FileText size={18} style={{ color: 'var(--primary)' }} />
+    <div 
+      className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden border border-slate-100 p-6 transition-all">
+        <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2 mb-5">
+          <FileText size={20} strokeWidth={1.5} className="text-teal-600" />
           <span>Record Expense</span>
         </h2>
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <select className="input-field" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} style={{ boxSizing: 'border-box' }}>
-            {EXPENSE_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
-          <input className="input-field" placeholder="Description (e.g., Purchased gloves boxes)" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} style={{ boxSizing: 'border-box' }} />
-          <div style={{ position: 'relative' }}>
-            <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', fontWeight: 700 }}>₹</span>
-            <input type="number" step="0.01" min="0.01" className="input-field" placeholder="0.00" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} style={{ paddingLeft: 28, width: '100%', boxSizing: 'border-box' }} />
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Category</label>
+            <select className="input-field w-full" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
+              {EXPENSE_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
           </div>
-          <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
-            <button type="button" onClick={onClose} className="btn-secondary" style={{ flex: 1 }}>Cancel</button>
-            <button type="submit" disabled={saving} className="btn-primary" style={{ flex: 2 }}>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Description</label>
+            <input className="input-field w-full" placeholder="Description (e.g., Purchased gloves boxes)" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Amount (₹)</label>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">₹</span>
+              <input type="number" step="0.01" min="0.01" className="input-field w-full pl-7" placeholder="0.00" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} />
+            </div>
+          </div>
+          <div className="flex items-center gap-3 mt-4 border-t border-slate-100 pt-4">
+            <button type="button" onClick={onClose} className="btn-secondary flex-1">Cancel</button>
+            <button type="submit" disabled={saving} className="btn-primary flex-2 flex items-center justify-center gap-2">
               {saving ? 'Saving...' : (
-                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-                  <Save size={16} />
+                <>
+                  <Save size={16} strokeWidth={1.5} />
                   <span>Record Expense</span>
-                </span>
+                </>
               )}
             </button>
           </div>

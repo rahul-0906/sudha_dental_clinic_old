@@ -30,45 +30,56 @@ function MedModal({ med, onClose, onSave }) {
   }
 
   return (
-    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
-      onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="glass" style={{ width: '100%', maxWidth: 480, borderRadius: 'var(--radius-xl)', padding: 28, boxShadow: '0 25px 60px rgba(0,0,0,0.5)', animation: 'slideIn 0.3s ease' }}>
-        <h2 style={{ display: 'flex', alignItems: 'center', gap: 6, margin: '0 0 20px', fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>
-          {med ? <Edit2 size={18} style={{ color: 'var(--primary)' }} /> : <Plus size={18} style={{ color: 'var(--primary)' }} />}
+    <div 
+      className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden border border-slate-100 p-6 transition-all">
+        <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2 mb-5">
+          {med ? <Edit2 size={20} strokeWidth={1.5} className="text-teal-600" /> : <Plus size={20} strokeWidth={1.5} className="text-teal-600" />}
           <span>{med ? 'Edit Medicine' : 'Add Medicine'}</span>
         </h2>
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <input className="input-field" placeholder="Medicine name *" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} style={{ boxSizing: 'border-box' }} />
-          <div style={{ display: 'flex', gap: 10 }}>
-            <select className="input-field" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} style={{ flex: 1, boxSizing: 'border-box' }}>
-              <option value="MEDICINE">Medicine</option>
-              <option value="DENTAL">Dental Consumable</option>
-            </select>
-            <input className="input-field" placeholder="Unit (Tablet, ml...)" value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })} style={{ flex: 1, boxSizing: 'border-box' }} />
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Medicine Name *</label>
+            <input className="input-field w-full" placeholder="e.g. Amoxicillin 500mg" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           </div>
-          <div style={{ display: 'flex', gap: 10 }}>
-            <div style={{ flex: 1 }}>
-              <label style={{ fontSize: 11, color: 'var(--text-muted)', display: 'block', marginBottom: 3 }}>Current Stock</label>
-              <input type="number" className="input-field" value={form.currentStock} onChange={(e) => setForm({ ...form, currentStock: parseInt(e.target.value) || 0 })} style={{ width: '100%', boxSizing: 'border-box' }} />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Category</label>
+              <select className="input-field w-full" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
+                <option value="MEDICINE">Medicine</option>
+                <option value="DENTAL">Dental Consumable</option>
+              </select>
             </div>
-            <div style={{ flex: 1 }}>
-              <label style={{ fontSize: 11, color: 'var(--text-muted)', display: 'block', marginBottom: 3 }}>Reorder Level</label>
-              <input type="number" className="input-field" value={form.reorderLevel} onChange={(e) => setForm({ ...form, reorderLevel: parseInt(e.target.value) || 0 })} style={{ width: '100%', boxSizing: 'border-box' }} />
-            </div>
-          </div>
-          <div style={{ display: 'flex', gap: 10 }}>
-            <div style={{ flex: 1 }}>
-              <label style={{ fontSize: 11, color: 'var(--text-muted)', display: 'block', marginBottom: 3 }}>Cost Price (₹)</label>
-              <input type="number" step="0.01" className="input-field" value={form.unitCostPrice} onChange={(e) => setForm({ ...form, unitCostPrice: e.target.value })} style={{ width: '100%', boxSizing: 'border-box' }} />
-            </div>
-            <div style={{ flex: 1 }}>
-              <label style={{ fontSize: 11, color: 'var(--text-muted)', display: 'block', marginBottom: 3 }}>Selling Price (₹)</label>
-              <input type="number" step="0.01" className="input-field" value={form.unitSellingPrice} onChange={(e) => setForm({ ...form, unitSellingPrice: e.target.value })} style={{ width: '100%', boxSizing: 'border-box' }} />
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Unit</label>
+              <input className="input-field w-full" placeholder="Tablet, ml..." value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })} />
             </div>
           </div>
-          <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
-            <button type="button" onClick={onClose} className="btn-secondary" style={{ flex: 1 }}>Cancel</button>
-            <button type="submit" disabled={saving} className="btn-primary" style={{ flex: 2 }}>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Current Stock</label>
+              <input type="number" className="input-field w-full" value={form.currentStock} onChange={(e) => setForm({ ...form, currentStock: parseInt(e.target.value) || 0 })} />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Reorder Level</label>
+              <input type="number" className="input-field w-full" value={form.reorderLevel} onChange={(e) => setForm({ ...form, reorderLevel: parseInt(e.target.value) || 0 })} />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Cost Price (₹)</label>
+              <input type="number" step="0.01" className="input-field w-full" value={form.unitCostPrice} onChange={(e) => setForm({ ...form, unitCostPrice: e.target.value })} />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Selling Price (₹)</label>
+              <input type="number" step="0.01" className="input-field w-full" value={form.unitSellingPrice} onChange={(e) => setForm({ ...form, unitSellingPrice: e.target.value })} />
+            </div>
+          </div>
+          <div className="flex items-center gap-3 mt-4 border-t border-slate-100 pt-4">
+            <button type="button" onClick={onClose} className="btn-secondary flex-1">Cancel</button>
+            <button type="submit" disabled={saving} className="btn-primary flex-2">
               {saving ? 'Saving...' : med ? 'Update Medicine' : 'Add Medicine'}
             </button>
           </div>
