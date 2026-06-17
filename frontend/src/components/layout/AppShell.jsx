@@ -142,7 +142,7 @@ export default function AppShell() {
           {/* Date/Time */}
           <div className="text-right text-xs leading-tight font-medium text-slate-500 whitespace-nowrap">
             <div className="text-slate-800 font-semibold">
-              {format(now, 'hh:mm:ss aa')}
+              {format(now, 'hh:mm aa')}
             </div>
             <div className="text-slate-400 mt-0.5">
               {format(now, 'dd MMM yyyy')}
