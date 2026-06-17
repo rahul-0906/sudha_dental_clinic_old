@@ -203,29 +203,18 @@ export default function PatientHistoryPage() {
   const totalMedsPrescribed = visits.reduce((acc, visit) => acc + (visit.prescriptions?.length || 0), 0)
 
   return (
-    <div style={{ display: 'flex', height: '100%', overflow: 'hidden' }}>
+    <div className="flex h-full w-full overflow-hidden bg-slate-50">
       {/* 1. LEFT PANEL: Patients Directory */}
-      <div style={{
-        width: 320,
-        borderRight: '1px solid var(--border)',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-        background: 'var(--bg-800)',
-        flexShrink: 0
-      }}>
+      <div className="w-[280px] border-r border-slate-200 flex flex-col overflow-hidden bg-white shrink-0">
         {/* Search Header */}
-        <div style={{ padding: 16, borderBottom: '1px solid var(--border)', flexShrink: 0 }}>
-          <h3 style={{ display: 'flex', alignItems: 'center', gap: 6, margin: '0 0 12px', fontSize: 14, fontWeight: 700, color: 'var(--text-secondary)' }}>
-            <Users size={16} />
+        <div className="p-4 border-b border-slate-200 shrink-0">
+          <h3 className="flex items-center gap-1.5 mb-3 text-sm font-bold text-slate-700">
+            <Users size={16} strokeWidth={1.5} className="text-teal-600" />
             <span>Patient Directory</span>
           </h3>
-          <div className="flex items-center gap-2 w-full mb-4">
+          <div className="flex items-center gap-2 w-full">
             <div className="relative flex-1">
-              <Search size={16} style={{
-                position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)',
-                color: 'var(--text-muted)', pointerEvents: 'none'
-              }} />
+              <Search size={16} strokeWidth={1.5} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
               <input
                 type="text"
                 value={query}
@@ -246,15 +235,15 @@ export default function PatientHistoryPage() {
         </div>
 
         {/* Directory List */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: 8 }}>
+        <div className="flex-1 overflow-y-auto p-2">
           {loadingList ? (
-            <div style={{ textAlign: 'center', padding: 30, color: 'var(--text-muted)' }}>
+            <div className="text-center py-8 text-xs text-slate-400">
               Loading patient list...
             </div>
           ) : patients.length === 0 ? (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 40, color: 'var(--text-muted)', gap: 8 }}>
-              <Users size={28} strokeWidth={1.5} style={{ color: 'var(--text-muted)' }} />
-              <span>No patients found</span>
+            <div className="flex flex-col items-center justify-center py-12 text-slate-400 gap-2">
+              <Users size={24} strokeWidth={1.5} className="text-slate-300" />
+              <span className="text-xs">No patients found</span>
             </div>
           ) : (
             patients.map((pat) => {
@@ -263,44 +252,26 @@ export default function PatientHistoryPage() {
                 <div
                   key={pat.id}
                   onClick={() => setSelectedPat(pat)}
-                  style={{
-                    padding: '10px 12px',
-                    borderRadius: 'var(--radius-sm)',
-                    cursor: 'pointer',
-                    marginBottom: 4,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 12,
-                    background: isSelected ? 'rgba(13,148,136,0.15)' : 'transparent',
-                    border: `1px solid ${isSelected ? 'var(--border-bright)' : 'transparent'}`,
-                    transition: 'var(--transition)'
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!isSelected) e.currentTarget.style.background = 'var(--surface-hover)'
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isSelected) e.currentTarget.style.background = 'transparent'
-                  }}
+                  className={`p-2.5 rounded-lg cursor-pointer mb-1 flex items-center gap-3 transition-colors ${
+                    isSelected 
+                      ? 'bg-teal-50/85 border border-teal-200/50 text-teal-700' 
+                      : 'bg-transparent border border-transparent text-slate-700 hover:bg-slate-50'
+                  }`}
                 >
-                  <div style={{
-                    width: 38, height: 38, borderRadius: '50%',
-                    background: 'linear-gradient(135deg, var(--primary), var(--primary-dark))',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 14, fontWeight: 700, color: 'white', flexShrink: 0
-                  }}>
+                  <div className="w-[34px] h-[34px] rounded-full bg-gradient-to-br from-teal-500 to-teal-700 flex items-center justify-center text-xs font-bold text-white shrink-0">
                     {pat.name?.[0]?.toUpperCase()}
                   </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  <div className="flex-1 min-w-0">
+                    <div className={`text-xs font-semibold truncate ${isSelected ? 'text-teal-900' : 'text-slate-800'}`}>
                       {pat.name}
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: 'var(--text-secondary)', marginTop: 2 }}>
-                      <Phone size={11} />
-                      <span>{pat.phone}</span>
+                    <div className={`flex items-center gap-1 text-[11px] mt-0.5 ${isSelected ? 'text-teal-600' : 'text-slate-400'}`}>
+                      <Phone size={10} strokeWidth={1.5} className="shrink-0" />
+                      <span className="truncate">{pat.phone}</span>
                     </div>
                   </div>
                   {pat.gender && (
-                    <div style={{ fontSize: 10, background: 'rgba(255,255,255,0.06)', padding: '2px 6px', borderRadius: 4, color: 'var(--text-muted)' }}>
+                    <div className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${isSelected ? 'bg-teal-100 text-teal-850' : 'bg-slate-100 text-slate-500'}`}>
                       {pat.gender[0]}
                     </div>
                   )}
