@@ -186,27 +186,29 @@ export default function AppShell() {
             {isStaffMode ? (
               <StaffPanel />
             ) : (
-              <div className="p-5 flex flex-col gap-5 h-full overflow-hidden">
-                {/* Structural Header */}
-                <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Queue Management</h2>
+              <div className="p-5 flex flex-col h-full overflow-hidden">
+                <div className="flex flex-col gap-3 shrink-0">
+                  {/* Structural Header */}
+                  <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Queue Management</h2>
 
-                {/* Search & Register Patient 2-Column Row */}
-                <div className="flex items-center gap-2 w-full shrink-0">
-                  <div className="flex-1 min-w-0">
-                    <PatientSearch />
+                  {/* Search & Register Patient 2-Column Row */}
+                  <div className="flex items-center gap-2 w-full">
+                    <div className="flex-1 min-w-0">
+                      <PatientSearch />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowRegModal(true)}
+                      className="flex items-center justify-center shrink-0 w-10 h-10 bg-white text-teal-600 border border-slate-200 rounded-lg shadow-sm hover:bg-slate-50 hover:text-teal-700 transition-colors cursor-pointer"
+                      title="Register New Patient"
+                    >
+                      <UserPlus size={20} strokeWidth={1.5} />
+                    </button>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => setShowRegModal(true)}
-                    className="flex items-center justify-center shrink-0 w-10 h-10 bg-white text-teal-600 border border-slate-200 rounded-lg shadow-sm hover:bg-slate-50 hover:text-teal-700 transition-colors cursor-pointer"
-                    title="Register New Patient"
-                  >
-                    <UserPlus size={20} strokeWidth={1.5} />
-                  </button>
                 </div>
 
                 {/* Section Divider */}
-                <hr className="border-slate-200" />
+                <div className="w-full h-px bg-slate-200 my-4" />
 
                 <div className="flex-1 overflow-y-auto">
                   <QueueBoard compact />

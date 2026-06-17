@@ -13,60 +13,58 @@ export default function StaffPanel() {
   const checkoutPatients = queue.filter(v => v.status === 'CHECKOUT')
 
   return (
-    <div className="p-5 flex flex-col gap-5 h-full overflow-hidden">
-      {/* Structural Header */}
-      <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Queue Management</h2>
+    <div className="p-5 flex flex-col h-full overflow-hidden">
+      <div className="flex flex-col gap-4 shrink-0">
+        <div className="flex flex-col gap-3">
+          {/* Structural Header */}
+          <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Queue Management</h2>
 
-      {/* Search & Register Patient 2-Column Row */}
-      <div className="flex items-center gap-2 w-full shrink-0">
-        <div className="flex-1 min-w-0">
-          <PatientSearch />
+          {/* Search & Register Patient 2-Column Row */}
+          <div className="flex items-center gap-2 w-full">
+            <div className="flex-1 min-w-0">
+              <PatientSearch />
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowRegModal(true)}
+              className="flex items-center justify-center shrink-0 w-10 h-10 bg-white text-teal-600 border border-slate-200 rounded-lg shadow-sm hover:bg-slate-50 hover:text-teal-700 transition-colors cursor-pointer"
+              title="Register New Patient"
+            >
+              <UserPlus size={20} strokeWidth={1.5} />
+            </button>
+          </div>
         </div>
-        <button
-          type="button"
-          onClick={() => setShowRegModal(true)}
-          className="flex items-center justify-center shrink-0 w-10 h-10 bg-white text-teal-600 border border-slate-200 rounded-lg shadow-sm hover:bg-slate-50 hover:text-teal-700 transition-colors cursor-pointer"
-          title="Register New Patient"
-        >
-          <UserPlus size={20} strokeWidth={1.5} />
-        </button>
-      </div>
 
-      {/* Tabs */}
-      <div className="flex gap-1 shrink-0">
-        {['queue', 'checkout'].map(tab => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            style={{
-              flex: 1, padding: '10px 8px', borderRadius: 'var(--radius-sm)', fontSize: 14, fontWeight: 600,
-              background: activeTab === tab ? 'var(--primary-glow-bright)' : 'rgba(0,0,0,0.03)',
-              border: activeTab === tab ? '1px solid var(--border-bright)' : '1px solid var(--border)',
-              color: activeTab === tab ? 'var(--primary)' : 'var(--text-secondary)',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 6,
-            }}
-          >
-            {tab === 'queue' ? (
-              <>
-                <ListOrdered size={14} />
-                <span>Queue ({queue.filter(v => v.status !== 'DONE').length})</span>
-              </>
-            ) : (
-              <>
-                <CreditCard size={14} />
-                <span>Checkout ({checkoutPatients.length})</span>
-              </>
-            )}
-          </button>
-        ))}
+        {/* Tabs */}
+        <div className="flex items-center gap-2 w-full">
+          {['queue', 'checkout'].map(tab => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`flex-1 h-10 flex items-center justify-center gap-2 rounded-lg border px-2 text-sm font-semibold whitespace-nowrap transition-colors cursor-pointer ${
+                activeTab === tab 
+                  ? 'bg-teal-50 border-teal-200 text-teal-700' 
+                  : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100/50'
+              }`}
+            >
+              {tab === 'queue' ? (
+                <>
+                  <ListOrdered size={14} />
+                  <span>Queue ({queue.filter(v => v.status !== 'DONE').length})</span>
+                </>
+              ) : (
+                <>
+                  <CreditCard size={14} />
+                  <span>Checkout ({checkoutPatients.length})</span>
+                </>
+              )}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Section Divider */}
-      <hr className="border-slate-200" />
+      <div className="w-full h-px bg-slate-200 my-4" />
 
       {activeTab === 'queue' ? (
         <div className="flex-1 overflow-y-auto">
