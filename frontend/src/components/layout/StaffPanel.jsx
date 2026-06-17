@@ -36,16 +36,15 @@ export default function StaffPanel() {
         </div>
 
         {/* Tabs */}
-        <div className="flex items-center gap-2 w-full">
+        <div className="flex items-center w-full bg-slate-200/50 p-1 rounded-lg gap-1">
           {['queue', 'checkout'].map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`flex-1 h-10 flex items-center justify-center gap-2 rounded-lg border px-2 text-sm font-semibold whitespace-nowrap transition-colors cursor-pointer ${
-                activeTab === tab 
-                  ? 'bg-teal-50 border-teal-200 text-teal-700' 
-                  : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100/50'
-              }`}
+              className={activeTab === tab 
+                ? 'flex-1 h-8 flex items-center justify-center gap-2 bg-white text-teal-700 shadow-sm rounded-md text-sm font-semibold whitespace-nowrap transition-all cursor-pointer'
+                : 'flex-1 h-8 flex items-center justify-center gap-2 text-slate-500 hover:text-slate-700 hover:bg-slate-200/50 rounded-md text-sm font-semibold whitespace-nowrap transition-all cursor-pointer'
+              }
             >
               {tab === 'queue' ? (
                 <>
