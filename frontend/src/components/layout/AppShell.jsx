@@ -182,7 +182,7 @@ export default function AppShell() {
       <div className="flex-1 w-full overflow-hidden flex bg-slate-50">
         {/* Left Sidebar */}
         {!shouldHideSidebar && (
-          <aside className="w-[320px] shrink-0 border-r border-slate-200 bg-slate-50 flex flex-col h-full overflow-hidden">
+          <aside className="w-[280px] shrink-0 border-r border-slate-200 bg-slate-50 flex flex-col h-full overflow-hidden">
             {isStaffMode ? (
               <StaffPanel />
             ) : (
