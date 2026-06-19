@@ -204,15 +204,6 @@ export default function AppShell() {
               </span>
             </button>
 
-            {/* Toggle Role Button */}
-            <button 
-              onClick={() => dispatch(setStaffMode(!isStaffMode))}
-              className="p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-55 border border-slate-205 bg-white transition-all cursor-pointer flex items-center justify-center"
-              title={isStaffMode ? "Switch to Solo Mode (Doctor view)" : "Switch to Staff Mode (Shared desk)"}
-            >
-              <Filter size={18} strokeWidth={1.5} />
-            </button>
-
             {/* Logout */}
             <button 
               onClick={handleLogout}
