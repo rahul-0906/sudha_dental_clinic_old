@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import {
   searchPatients as apiSearch,
-  getVisitHistory as apiVisitHistory,
   registerPatient as apiRegister,
 } from '../../api/patients'
 import toast from 'react-hot-toast'
@@ -14,18 +13,6 @@ export const searchPatients = createAsyncThunk(
       return res.data
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || 'Search failed')
-    }
-  }
-)
-
-export const fetchPatientHistory = createAsyncThunk(
-  'patient/fetchPatientHistory',
-  async (id, { rejectWithValue }) => {
-    try {
-      const res = await apiVisitHistory(id)
-      return res.data
-    } catch (err) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to load history')
     }
   }
 )
@@ -47,20 +34,16 @@ const patientSlice = createSlice({
   name: 'patient',
   initialState: {
     selectedPatient: null,
-    visitHistory: [],
     searchResults: [],
     loading: false,
-    historyLoading: false,
     error: null,
   },
   reducers: {
     setSelectedPatient: (state, action) => {
       state.selectedPatient = action.payload
-      state.visitHistory = []
     },
     clearSelectedPatient: (state) => {
       state.selectedPatient = null
-      state.visitHistory = []
       state.searchResults = []
     },
     clearSearchResults: (state) => {
@@ -83,18 +66,6 @@ const patientSlice = createSlice({
       })
       .addCase(searchPatients.rejected, (state, action) => {
         state.loading = false
-        state.error = action.payload
-      })
-      // fetchPatientHistory
-      .addCase(fetchPatientHistory.pending, (state) => {
-        state.historyLoading = true
-      })
-      .addCase(fetchPatientHistory.fulfilled, (state, action) => {
-        state.historyLoading = false
-        state.visitHistory = action.payload
-      })
-      .addCase(fetchPatientHistory.rejected, (state, action) => {
-        state.historyLoading = false
         state.error = action.payload
       })
       // registerPatient

@@ -15,11 +15,10 @@ import {
   Eye,
   ArrowLeft
 } from 'lucide-react'
-import { searchPatients } from '../../api/patients'
-import { addToQueue } from '../../api/visits'
 import PatientRegistrationModal from './PatientRegistrationModal'
 import PatientHistoryPage from './PatientHistoryPage'
 import { setActiveView } from '../../store/slices/appSlice'
+import { searchPatients } from '../../api/patients'
 import toast from 'react-hot-toast'
 
 export default function PatientsPage() {
@@ -52,14 +51,6 @@ export default function PatientsPage() {
     return () => clearTimeout(delayDebounce)
   }, [searchVal])
 
-  const handleAddPatientToQueue = async (patientId) => {
-    try {
-      await addToQueue(patientId)
-      toast.success('Patient added to consultation queue!')
-    } catch (err) {
-      toast.error('Failed to add patient to queue')
-    }
-  }
 
   // Filter patients by status
   const filteredPatients = patients.filter(pat => {
@@ -236,13 +227,6 @@ export default function PatientsPage() {
                             title="View Clinical History"
                           >
                             <Eye size={14} />
-                          </button>
-                          <button 
-                            onClick={() => handleAddPatientToQueue(pat.id)}
-                            className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 rounded-lg transition-all cursor-pointer"
-                            title="Add to Queue"
-                          >
-                            <PlusCircle size={14} />
                           </button>
                         </div>
                       </td>

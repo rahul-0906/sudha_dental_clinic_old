@@ -48,7 +48,6 @@ const Sparkline = ({ points, color = '#10B981' }) => {
 
 export default function Dashboard() {
   const dispatch = useDispatch()
-  const queue = useSelector((state) => state.queue.queue)
 
   // API State
   const [patients, setPatients] = useState([])
