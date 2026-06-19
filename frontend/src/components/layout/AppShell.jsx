@@ -55,9 +55,6 @@ export default function AppShell() {
   const [lowStockCount, setLowStockCount] = useState(0)
   const location = useLocation()
 
-  const hideSidebarViews = ['inventory', 'finance', 'settings', 'patients']
-  const hideSidebarRoutes = ['/inventory', '/finance', '/settings', '/patients']
-  const shouldHideSidebar = hideSidebarViews.includes(activeView) || hideSidebarRoutes.includes(location.pathname)
 
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 1000)
@@ -94,85 +91,83 @@ export default function AppShell() {
     <div className="w-full h-screen flex overflow-hidden bg-[#F8FAFC]">
       
       {/* 1. OUTERMOST LEFT SIDEBAR: Dark Menu Navigation */}
-      {!shouldHideSidebar && (
-        <aside className="w-[280px] shrink-0 bg-[#0A122A] text-slate-400 flex flex-col h-full overflow-hidden select-none">
-          
-          {/* Logo Header */}
-          <div className="h-[72px] shrink-0 border-b border-slate-800/80 flex items-center gap-3 px-6 text-white">
-            <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-teal-500/10 border border-teal-500/20 text-teal-400 shrink-0">
-              <ToothLogo size={20} />
+      <aside className="w-[280px] shrink-0 bg-[#0A122A] text-slate-400 flex flex-col h-full overflow-hidden select-none">
+        
+        {/* Logo Header */}
+        <div className="h-[72px] shrink-0 border-b border-slate-800/80 flex items-center gap-3 px-6 text-white">
+          <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-teal-500/10 border border-teal-500/20 text-teal-400 shrink-0">
+            <ToothLogo size={20} />
+          </div>
+          <div className="flex flex-col justify-center">
+            <div className="text-sm font-bold text-white whitespace-nowrap">
+              Sudha Dental Clinic
             </div>
-            <div className="flex flex-col justify-center">
-              <div className="text-sm font-bold text-white whitespace-nowrap">
-                Sudha Dental Clinic
-              </div>
-              <div className="text-[10px] font-medium text-slate-400 block mt-1">
-                Sankarankovil
-              </div>
+            <div className="text-[10px] font-medium text-slate-400 block mt-1">
+              Sankarankovil
             </div>
           </div>
+        </div>
 
-          {/* Navigation Menu Links */}
-          <nav className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-1.5 no-scrollbar">
-            {navItems.map(({ id, label, icon: Icon, badge, mockup }) => {
-              const isActive = activeView === id
-              return (
-                <button
-                  key={id}
-                  onClick={() => {
-                    if (mockup) {
-                      toast.success(`${label} module coming soon!`)
-                    } else {
-                      dispatch(setActiveView(id))
-                    }
-                  }}
-                  className={`
-                    w-full h-11 px-4 rounded-xl flex items-center justify-between text-left transition-all cursor-pointer group
-                    ${isActive 
-                      ? 'bg-teal-500/10 text-teal-400 font-semibold border border-teal-500/20' 
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 font-medium border border-transparent'
-                    }
-                  `}
-                >
-                  <div className="flex items-center gap-3">
-                    <Icon size={18} strokeWidth={1.5} className={isActive ? 'text-teal-400' : 'text-slate-400 group-hover:text-slate-200'} />
-                    <span className="text-xs tracking-wide">{label}</span>
-                  </div>
-                  {badge && (
-                    <span className="bg-blue-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0">
-                      {badge}
-                    </span>
-                  )}
-                </button>
-              )
-            })}
-          </nav>
+        {/* Navigation Menu Links */}
+        <nav className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-1.5 no-scrollbar">
+          {navItems.map(({ id, label, icon: Icon, badge, mockup }) => {
+            const isActive = activeView === id
+            return (
+              <button
+                key={id}
+                onClick={() => {
+                  if (mockup) {
+                    toast.success(`${label} module coming soon!`)
+                  } else {
+                    dispatch(setActiveView(id))
+                  }
+                }}
+                className={`
+                  w-full h-11 px-4 rounded-xl flex items-center justify-between text-left transition-all cursor-pointer group
+                  ${isActive 
+                    ? 'bg-teal-500/10 text-teal-400 font-semibold border border-teal-500/20' 
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 font-medium border border-transparent'
+                  }
+                `}
+              >
+                <div className="flex items-center gap-3">
+                  <Icon size={18} strokeWidth={1.5} className={isActive ? 'text-teal-400' : 'text-slate-400 group-hover:text-slate-200'} />
+                  <span className="text-xs tracking-wide">{label}</span>
+                </div>
+                {badge && (
+                  <span className="bg-blue-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0">
+                    {badge}
+                  </span>
+                )}
+              </button>
+            )
+          })}
+        </nav>
 
-          {/* User Profile Widget */}
-          <div className="p-4 border-t border-slate-800 flex items-center gap-3 bg-slate-950/20">
-            <div className="w-[34px] h-[34px] rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-white shrink-0">
-              DM
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="text-xs font-bold text-white truncate">Dr. Mariyappan</div>
-              <div className="text-[10px] text-slate-500 truncate mt-0.5">Administrator</div>
-            </div>
-            <ChevronRight size={14} className="text-slate-500" />
+        {/* User Profile Widget */}
+        <div className="p-4 border-t border-slate-800 flex items-center gap-3 bg-slate-950/20">
+          <div className="w-[34px] h-[34px] rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-white shrink-0">
+            DM
           </div>
-
-          {/* Clock/Weather Widget */}
-          <div className="p-4 bg-slate-950/40 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400 leading-tight">
-            <div>
-              <div className="text-[9px] text-slate-505 font-medium uppercase">{format(now, 'EEEE, dd MMM yyyy')}</div>
-              <div className="text-sm font-bold text-white mt-1">{format(now, 'hh:mm aa')}</div>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Sun size={14} className="text-amber-500 animate-spin-slow" />
-              <span className="font-semibold text-slate-350">28°C</span>
-            </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-xs font-bold text-white truncate">Dr. Mariyappan</div>
+            <div className="text-[10px] text-slate-500 truncate mt-0.5">Administrator</div>
           </div>
-        </aside>
-      )}
+          <ChevronRight size={14} className="text-slate-500" />
+        </div>
+
+        {/* Clock/Weather Widget */}
+        <div className="p-4 bg-slate-950/40 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400 leading-tight">
+          <div>
+            <div className="text-[9px] text-slate-505 font-medium uppercase">{format(now, 'EEEE, dd MMM yyyy')}</div>
+            <div className="text-sm font-bold text-white mt-1">{format(now, 'hh:mm aa')}</div>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Sun size={14} className="text-amber-500 animate-spin-slow" />
+            <span className="font-semibold text-slate-350">28°C</span>
+          </div>
+        </div>
+      </aside>
 
       {/* 2. RIGHT WORKSPACE CONTAINER */}
       <div className="flex-1 h-screen flex flex-col overflow-hidden">
