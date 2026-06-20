@@ -169,12 +169,23 @@ export default function PatientsPage() {
               </tr>
             </thead>
             <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan="6" className="text-center py-10 text-slate-400 font-medium">
-                    Loading patients directory...
-                  </td>
-                </tr>
+               {loading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <tr key={i} className="animate-pulse border-b border-slate-50 last:border-none">
+                    <td className="p-4 flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-slate-200 shrink-0" />
+                      <div className="flex-1 flex flex-col gap-1.5">
+                        <div className="w-24 h-3.5 bg-slate-200 rounded" />
+                        <div className="w-16 h-2 bg-slate-200 rounded" />
+                      </div>
+                    </td>
+                    <td className="p-4"><div className="w-20 h-3 bg-slate-200 rounded" /></td>
+                    <td className="p-4"><div className="w-16 h-3 bg-slate-200 rounded" /></td>
+                    <td className="p-4"><div className="w-20 h-3 bg-slate-200 rounded" /></td>
+                    <td className="p-4"><div className="w-12 h-4 bg-slate-200 rounded-full" /></td>
+                    <td className="p-4 text-center"><div className="w-6 h-6 bg-slate-200 rounded mx-auto" /></td>
+                  </tr>
+                ))
               ) : currentItems.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="text-center py-10 text-slate-400 font-medium">

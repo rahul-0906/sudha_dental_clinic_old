@@ -16,7 +16,8 @@ import {
   UserPlus, 
   Mail,
   ArrowLeft,
-  Droplet
+  Droplet,
+  Loader2
 } from 'lucide-react'
 import { searchPatients, getPatientById } from '../../api/patients'
 import PatientRegistrationModal from './PatientRegistrationModal'
@@ -367,10 +368,14 @@ export default function PatientHistoryPage({ defaultPatientId }) {
                 />
                 <button
                   onClick={() => !uploadingXray && fileInputRef.current.click()}
-                  className="btn-primary flex items-center gap-1.5 text-xs h-9"
+                  className={`btn-primary flex items-center gap-1.5 text-xs h-9 ${uploadingXray ? 'opacity-70 cursor-not-allowed' : ''}`}
                   disabled={uploadingXray}
                 >
-                  <Upload size={14} />
+                  {uploadingXray ? (
+                    <Loader2 className="animate-spin" size={14} strokeWidth={1.5} />
+                  ) : (
+                    <Upload size={14} strokeWidth={1.5} />
+                  )}
                   <span>{uploadingXray ? 'Uploading...' : 'Upload X-Ray'}</span>
                 </button>
                 <input

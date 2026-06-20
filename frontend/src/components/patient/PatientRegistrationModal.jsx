@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { X, Check, UserPlus } from 'lucide-react'
+import { X, Check, UserPlus, Loader2 } from 'lucide-react'
 import { registerPatient } from '../../api/patients'
 import { setSelectedPatient } from '../../store/slices/patientSlice'
 import toast from 'react-hot-toast'
@@ -277,9 +277,14 @@ export default function PatientRegistrationModal({ onClose }) {
             <button 
               type="submit" 
               disabled={loading} 
-              className="btn-primary flex items-center justify-center gap-2"
+              className={`btn-primary flex items-center justify-center gap-2 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
-              {loading ? 'Registering...' : (
+              {loading ? (
+                <>
+                  <Loader2 className="animate-spin" size={16} strokeWidth={1.5} />
+                  <span>Registering...</span>
+                </>
+              ) : (
                 <>
                   <Check size={16} strokeWidth={1.5} />
                   <span>Register Patient</span>

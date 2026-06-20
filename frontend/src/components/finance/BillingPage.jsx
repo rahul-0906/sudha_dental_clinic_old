@@ -11,7 +11,8 @@ import {
   MoreHorizontal,
   Eye,
   CheckCircle,
-  X
+  X,
+  Loader2
 } from 'lucide-react'
 import { setActiveView } from '../../store/slices/appSlice'
 import { getAllInvoices, createInvoice } from '../../api/invoices'
@@ -25,6 +26,7 @@ export default function BillingPage() {
   const [invoices, setInvoices] = useState([])
   const [patients, setPatients] = useState([])
   const [loading, setLoading] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [activeTab, setActiveTab] = useState('Invoices') // Invoices, Payments, Transactions
   const [showAddModal, setShowAddModal] = useState(false)
@@ -68,6 +70,7 @@ export default function BillingPage() {
       toast.error('Please select a patient')
       return
     }
+    setSubmitting(true)
     try {
       await createInvoice({
         ...newInvoice,
@@ -79,6 +82,8 @@ export default function BillingPage() {
       loadData()
     } catch (err) {
       toast.error('Failed to log invoice')
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -221,11 +226,20 @@ export default function BillingPage() {
               </thead>
               <tbody>
                 {loading ? (
-                  <tr>
-                    <td colSpan="7" className="text-center py-10 text-slate-400 font-medium">
-                      Loading invoices...
-                    </td>
-                  </tr>
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <tr key={i} className="animate-pulse border-b border-slate-50 last:border-none">
+                      <td className="p-3"><div className="w-16 h-4 bg-slate-200 rounded font-mono" /></td>
+                      <td className="p-3 flex items-center gap-2">
+                        <div className="w-6.5 h-6.5 rounded-full bg-slate-200 shrink-0" />
+                        <div className="w-24 h-4 bg-slate-200 rounded" />
+                      </td>
+                      <td className="p-3"><div className="w-20 h-4 bg-slate-200 rounded" /></td>
+                      <td className="p-3"><div className="w-12 h-4 bg-slate-200 rounded" /></td>
+                      <td className="p-3"><div className="w-12 h-4 bg-slate-200 rounded" /></td>
+                      <td className="p-3"><div className="w-12 h-4 bg-slate-200 rounded-full" /></td>
+                      <td className="p-3 text-center"><div className="w-12 h-6 bg-slate-200 rounded mx-auto" /></td>
+                    </tr>
+                  ))
                 ) : currentItems.length === 0 ? (
                   <tr>
                     <td colSpan="7" className="text-center py-10 text-slate-400 font-medium">
@@ -430,9 +444,11 @@ export default function BillingPage() {
                 </button>
                 <button 
                   type="submit" 
-                  className="btn-primary flex-2"
+                  disabled={submitting} 
+                  className={`btn-primary flex-2 flex items-center justify-center gap-2 ${submitting ? 'opacity-70 cursor-not-allowed' : ''}`}
                 >
-                  Create Invoice
+                  {submitting && <Loader2 className="animate-spin" size={16} strokeWidth={1.5} />}
+                  <span>{submitting ? 'Creating...' : 'Create Invoice'}</span>
                 </button>
               </div>
             </form>

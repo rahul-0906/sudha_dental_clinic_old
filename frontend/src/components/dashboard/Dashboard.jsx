@@ -22,7 +22,8 @@ import {
   AlertTriangle,
   FileCheck2,
   MailCheck,
-  ChevronLeft
+  ChevronLeft,
+  Loader2
 } from 'lucide-react'
 import { setActiveView } from '../../store/slices/appSlice'
 import { searchPatients } from '../../api/patients'
@@ -115,6 +116,45 @@ export default function Dashboard() {
     { label: "Book Appointment", desc: "Schedule new appointment", icon: Calendar, action: () => dispatch(setActiveView('appointments')) },
     { label: "Payment", desc: "Record payment", icon: CreditCard, action: () => dispatch(setActiveView('finance')) }
   ]
+
+  if (loading) {
+    return (
+      <div className="flex flex-col h-full w-full bg-[#F8FAFC] overflow-y-auto p-6 gap-6 select-none">
+        {/* Skeleton Quick Actions */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="bg-white border border-slate-100 rounded-2xl p-5 h-22 animate-pulse flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-slate-100 shrink-0" />
+              <div className="flex-1 flex flex-col gap-2">
+                <div className="w-24 h-4 bg-slate-100/80 rounded" />
+                <div className="w-32 h-3 bg-slate-100/50 rounded" />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Skeleton KPI Row */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="bg-white border border-slate-100 rounded-2xl p-5 h-28 animate-pulse flex flex-col justify-between">
+              <div className="flex justify-between items-center">
+                <div className="w-16 h-3 bg-slate-100 rounded" />
+                <div className="w-8 h-8 rounded-xl bg-slate-100" />
+              </div>
+              <div className="w-20 h-7 bg-slate-205 rounded" />
+              <div className="w-32 h-3.5 bg-slate-100 rounded" />
+            </div>
+          ))}
+        </div>
+
+        {/* Skeleton Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 bg-white border border-slate-100 rounded-2xl p-5 h-80 animate-pulse" />
+          <div className="bg-white border border-slate-100 rounded-2xl p-5 h-80 animate-pulse" />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col h-full w-full bg-[#F8FAFC] overflow-y-auto p-6 gap-6 select-none">

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Plus, TrendingUp, TrendingDown, DollarSign, FileText, Save } from 'lucide-react'
+import { Plus, TrendingUp, TrendingDown, DollarSign, FileText, Save, Loader2 } from 'lucide-react'
 import { getTransactions, addExpense } from '../../api/misc'
 import { format } from 'date-fns'
 import toast from 'react-hot-toast'
@@ -53,8 +53,17 @@ function ExpenseModal({ onClose, onSave }) {
           </div>
           <div className="flex items-center gap-3 mt-4 border-t border-slate-100 pt-4">
             <button type="button" onClick={onClose} className="btn-secondary flex-1">Cancel</button>
-            <button type="submit" disabled={saving} className="btn-primary flex-2 flex items-center justify-center gap-2">
-              {saving ? 'Saving...' : (
+            <button 
+              type="submit" 
+              disabled={saving} 
+              className={`btn-primary flex-2 flex items-center justify-center gap-2 ${saving ? 'opacity-70 cursor-not-allowed' : ''}`}
+            >
+              {saving ? (
+                <>
+                  <Loader2 className="animate-spin" size={16} strokeWidth={1.5} />
+                  <span>Saving...</span>
+                </>
+              ) : (
                 <>
                   <Save size={16} strokeWidth={1.5} />
                   <span>Record Expense</span>
@@ -131,27 +140,34 @@ export default function FinancialLedger() {
       </div>
 
       {/* Transactions Table */}
-      {loading ? (
-        <div style={{ textAlign: 'center', padding: 60, color: 'var(--text-muted)' }}>Loading transactions...</div>
-      ) : (
-        <div className="w-full overflow-x-auto bg-white border border-slate-200 rounded-xl shadow-sm">
-          <table className="w-full text-left border-collapse">
-            <thead className="bg-slate-50 border-b border-slate-200">
-              <tr>
-                {['Date', 'Type', 'Category', 'Description', 'Amount'].map(h => (
-                  <th key={h} className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {transactions.length === 0 && (
-                <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-slate-500 text-sm">
-                    No transactions for this period
-                  </td>
+      <div className="w-full overflow-x-auto bg-white border border-slate-200 rounded-xl shadow-sm">
+        <table className="w-full text-left border-collapse">
+          <thead className="bg-slate-50 border-b border-slate-200">
+            <tr>
+              {['Date', 'Type', 'Category', 'Description', 'Amount'].map(h => (
+                <th key={h} className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              Array.from({ length: 5 }).map((_, i) => (
+                <tr key={i} className="animate-pulse border-b border-slate-100 last:border-none">
+                  <td className="px-6 py-4"><div className="w-24 h-4 bg-slate-150 rounded" /></td>
+                  <td className="px-6 py-4"><div className="w-16 h-4 bg-slate-150 rounded" /></td>
+                  <td className="px-6 py-4"><div className="w-20 h-4 bg-slate-150 rounded" /></td>
+                  <td className="px-6 py-4"><div className="w-40 h-4 bg-slate-150 rounded" /></td>
+                  <td className="px-6 py-4"><div className="w-16 h-4 bg-slate-150 rounded ml-auto" /></td>
                 </tr>
-              )}
-              {transactions.map(t => (
+              ))
+            ) : transactions.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="px-6 py-12 text-center text-slate-500 text-sm">
+                  No transactions for this period
+                </td>
+              </tr>
+            ) : (
+              transactions.map(t => (
                 <tr key={t.id} className="hover:bg-slate-50/50 transition-colors border-b border-slate-100 last:border-none">
                   <td className="px-6 py-4 text-sm text-slate-500 whitespace-nowrap">
                     {t.transactionDate ? format(new Date(t.transactionDate), 'dd MMM yyyy') : '-'}
@@ -175,7 +191,6 @@ export default function FinancialLedger() {
             </tbody>
           </table>
         </div>
-      )}
 
       {showExpenseModal && <ExpenseModal onClose={() => setShowExpenseModal(false)} onSave={load} />}
     </div>

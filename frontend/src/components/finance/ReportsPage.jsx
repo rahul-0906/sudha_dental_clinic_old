@@ -153,8 +153,29 @@ export default function ReportsPage() {
       </div>
 
       {loading ? (
-        <div className="text-center py-20 text-slate-400 text-xs font-medium">
-          Loading report summaries...
+        <div className="flex flex-col gap-6 animate-pulse select-none">
+          {/* Skeleton Date Banner */}
+          <div className="h-12 bg-slate-100 border border-slate-200/50 rounded-2xl" />
+
+          {/* Skeleton Stats Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            {Array.from({ length: 5 }).map((_, idx) => (
+              <div key={idx} className="h-24 bg-white border border-slate-100 rounded-2xl p-4 flex flex-col justify-between shadow-sm">
+                <div className="flex items-center justify-between">
+                  <div className="w-16 h-2.5 bg-slate-200 rounded" />
+                  <div className="w-7 h-7 rounded-lg bg-slate-200" />
+                </div>
+                <div className="w-12 h-6 bg-slate-200 rounded" />
+              </div>
+            ))}
+          </div>
+
+          {/* Skeleton Sub-Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {Array.from({ length: 3 }).map((_, idx) => (
+              <div key={idx} className="h-[220px] bg-white border border-slate-100 rounded-2xl p-5 shadow-sm" />
+            ))}
+          </div>
         </div>
       ) : (
         <div className="flex flex-col gap-6">

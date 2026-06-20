@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux'
 import toast from 'react-hot-toast'
 import { setAuthenticated } from '../../store/slices/appSlice'
 import { verifyPin } from '../../api/misc'
-import { Lock } from 'lucide-react'
+import { Lock, Loader2 } from 'lucide-react'
 
 const ToothLogo = ({ size = 80, glow = false }) => (
   <svg width={size} height={size} viewBox="0 0 80 80" fill="none" stroke="var(--primary)" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg"
@@ -189,21 +189,17 @@ export default function PinLogin() {
         <button
           onClick={() => handleSubmit()}
           disabled={loading || pin.some(d => d === '')}
-          className="btn-primary"
+          className={`btn-primary ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
           style={{ width: '100%', fontSize: 15, padding: '14px', position: 'relative' }}
         >
           {loading ? (
             <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-              <span style={{
-                width: 16, height: 16, border: '2px solid rgba(255,255,255,0.3)',
-                borderTopColor: 'white', borderRadius: '50%',
-                animation: 'spin 0.8s linear infinite', display: 'inline-block',
-              }} />
-              Verifying...
+              <Loader2 className="animate-spin" size={16} strokeWidth={1.5} />
+              <span>Verifying...</span>
             </span>
           ) : (
             <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-              <Lock size={16} />
+              <Lock size={16} strokeWidth={1.5} />
               <span>Unlock Clinic</span>
             </span>
           )}

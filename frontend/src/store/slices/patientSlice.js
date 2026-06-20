@@ -35,7 +35,7 @@ const patientSlice = createSlice({
   initialState: {
     selectedPatient: null,
     searchResults: [],
-    loading: false,
+    isLoading: false,
     error: null,
   },
   reducers: {
@@ -57,27 +57,28 @@ const patientSlice = createSlice({
     builder
       // searchPatients
       .addCase(searchPatients.pending, (state) => {
-        state.loading = true
+        state.isLoading = true
         state.error = null
       })
       .addCase(searchPatients.fulfilled, (state, action) => {
-        state.loading = false
+        state.isLoading = false
         state.searchResults = action.payload
       })
       .addCase(searchPatients.rejected, (state, action) => {
-        state.loading = false
+        state.isLoading = false
         state.error = action.payload
       })
       // registerPatient
       .addCase(registerPatient.pending, (state) => {
-        state.loading = true
+        state.isLoading = true
+        state.error = null
       })
       .addCase(registerPatient.fulfilled, (state, action) => {
-        state.loading = false
+        state.isLoading = false
         state.selectedPatient = action.payload
       })
       .addCase(registerPatient.rejected, (state, action) => {
-        state.loading = false
+        state.isLoading = false
         state.error = action.payload
         toast.error(action.payload || 'Registration failed')
       })

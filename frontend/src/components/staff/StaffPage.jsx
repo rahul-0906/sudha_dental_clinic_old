@@ -11,7 +11,8 @@ import {
   ChevronLeft,
   ChevronRight,
   MoreHorizontal,
-  X
+  X,
+  Loader2
 } from 'lucide-react'
 import { useDispatch } from 'react-redux'
 import { setActiveView } from '../../store/slices/appSlice'
@@ -22,6 +23,7 @@ export default function StaffPage() {
   const dispatch = useDispatch()
   const [staffList, setStaffList] = useState([])
   const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
   const [showAddModal, setShowAddModal] = useState(false)
   const [editMode, setEditMode] = useState(false)
   const [selectedStaffId, setSelectedStaffId] = useState(null)
@@ -55,6 +57,7 @@ export default function StaffPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setSaving(true)
     try {
       if (editMode) {
         await updateStaff(selectedStaffId, form)
@@ -68,6 +71,8 @@ export default function StaffPage() {
       loadStaff()
     } catch (err) {
       toast.error('Failed to save staff member')
+    } finally {
+      setSaving(false)
     }
   }
 
@@ -147,11 +152,32 @@ export default function StaffPage() {
             </thead>
             <tbody>
               {loading ? (
-                <tr>
-                  <td colSpan="6" className="text-center py-10 text-slate-400 font-medium">
-                    Loading staff directory...
-                  </td>
-                </tr>
+                Array.from({ length: 4 }).map((_, i) => (
+                  <tr key={i} className="animate-pulse border-b border-slate-50 last:border-none">
+                    <td className="p-4 flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-slate-200 shrink-0" />
+                      <div className="flex-1 flex flex-col gap-1.5">
+                        <div className="w-24 h-3.5 bg-slate-200 rounded" />
+                        <div className="w-16 h-2 bg-slate-200 rounded" />
+                      </div>
+                    </td>
+                    <td className="p-4"><div className="w-16 h-4 bg-slate-200 rounded" /></td>
+                    <td className="p-4">
+                      <div className="flex flex-col gap-1.5">
+                        <div className="w-20 h-3 bg-slate-200 rounded" />
+                        <div className="w-28 h-3 bg-slate-200 rounded" />
+                      </div>
+                    </td>
+                    <td className="p-4">
+                      <div className="flex flex-col gap-1.5">
+                        <div className="w-24 h-3.5 bg-slate-200 rounded" />
+                        <div className="w-16 h-2 bg-slate-200 rounded" />
+                      </div>
+                    </td>
+                    <td className="p-4"><div className="w-12 h-4 bg-slate-200 rounded-full" /></td>
+                    <td className="p-4 text-center"><div className="w-12 h-6 bg-slate-200 rounded mx-auto" /></td>
+                  </tr>
+                ))
               ) : staffList.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="text-center py-10 text-slate-400 font-medium">
@@ -362,9 +388,11 @@ export default function StaffPage() {
                 </button>
                 <button 
                   type="submit" 
-                  className="btn-primary flex-2"
+                  disabled={saving}
+                  className={`btn-primary flex-2 flex items-center justify-center gap-2 ${saving ? 'opacity-70 cursor-not-allowed' : ''}`}
                 >
-                  Save
+                  {saving && <Loader2 className="animate-spin" size={16} strokeWidth={1.5} />}
+                  <span>{saving ? 'Saving...' : 'Save'}</span>
                 </button>
               </div>
             </form>

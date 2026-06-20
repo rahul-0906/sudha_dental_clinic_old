@@ -11,7 +11,8 @@ import {
   User,
   Plus,
   UserPlus,
-  X
+  X,
+  Loader2
 } from 'lucide-react'
 import { setActiveView } from '../../store/slices/appSlice'
 import { getAppointments, createAppointment, updateAppointmentStatus } from '../../api/appointments'
@@ -25,6 +26,7 @@ export default function AppointmentsPage() {
   const [appointments, setAppointments] = useState([])
   const [patients, setPatients] = useState([])
   const [loading, setLoading] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
 
   // Filter States
   const [selectedDoctor, setSelectedDoctor] = useState('All Doctors')
@@ -82,6 +84,7 @@ export default function AppointmentsPage() {
       toast.error('Please select a patient')
       return
     }
+    setSubmitting(true)
     try {
       await createAppointment(newAppt)
       toast.success('Appointment scheduled successfully!')
@@ -89,6 +92,8 @@ export default function AppointmentsPage() {
       loadAppointments()
     } catch (err) {
       toast.error('Failed to schedule appointment')
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -308,9 +313,21 @@ export default function AppointmentsPage() {
         {/* Timeline list */}
         <div className="flex flex-col gap-4 border border-slate-100 rounded-2xl p-4 bg-white shadow-sm flex-1">
           {loading ? (
-            <div className="text-center py-10 text-slate-400 text-xs font-medium">
-              Loading schedules...
-            </div>
+            Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="animate-pulse flex gap-4 items-start border-b border-slate-50 last:border-none pb-4 last:pb-0">
+                <div className="w-20 font-semibold text-xs mt-1 flex items-center gap-1.5 select-none shrink-0">
+                  <Clock size={12} className="text-slate-200" />
+                  <div className="w-12 h-3.5 bg-slate-200 rounded" />
+                </div>
+                <div className="flex-1 border border-slate-100 rounded-xl p-3 flex justify-between items-center bg-slate-50/30">
+                  <div className="flex-1 flex flex-col gap-1.5">
+                    <div className="w-28 h-3.5 bg-slate-200 rounded" />
+                    <div className="w-16 h-2.5 bg-slate-150 rounded" />
+                  </div>
+                  <div className="w-16 h-5 bg-slate-200 rounded-full" />
+                </div>
+              </div>
+            ))
           ) : filteredAppointments.length === 0 ? (
             <div className="text-center py-10 text-slate-400 text-xs font-medium">
               No appointments scheduled for this date.
@@ -523,9 +540,11 @@ export default function AppointmentsPage() {
                 </button>
                 <button 
                   type="submit" 
-                  className="btn-primary flex-2"
+                  disabled={submitting} 
+                  className={`btn-primary flex-2 flex items-center justify-center gap-2 ${submitting ? 'opacity-70 cursor-not-allowed' : ''}`}
                 >
-                  Schedule Appointment
+                  {submitting && <Loader2 className="animate-spin" size={16} strokeWidth={1.5} />}
+                  <span>{submitting ? 'Scheduling...' : 'Schedule Appointment'}</span>
                 </button>
               </div>
             </form>

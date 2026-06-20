@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
-import { Plus, Search, Edit2, Package, AlertTriangle, Pill, X, ArrowLeft } from 'lucide-react'
+import { Plus, Search, Edit2, Package, AlertTriangle, Pill, X, ArrowLeft, Loader2 } from 'lucide-react'
 import { getAllMedications, createMedication, updateMedication, getLowStockAlerts } from '../../api/medications'
 import { ToothLogo } from '../layout/AppShell'
 import { setActiveView } from '../../store/slices/appSlice'
@@ -162,9 +162,10 @@ function MedModal({ med, onClose, onSave }) {
             <button 
               type="submit" 
               disabled={saving} 
-              className="btn-primary flex-2"
+              className={`btn-primary flex-2 flex items-center justify-center gap-2 ${saving ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
-              {saving ? 'Saving...' : med ? 'Update Medicine' : 'Add Medicine'}
+              {saving && <Loader2 className="animate-spin" size={16} strokeWidth={1.5} />}
+              <span>{saving ? 'Saving...' : med ? 'Update Medicine' : 'Add Medicine'}</span>
             </button>
           </div>
         </form>
@@ -280,28 +281,38 @@ export default function InventoryPage() {
       </div>
 
       {/* Table */}
-      {loading ? (
-        <div className="text-center py-20 text-slate-400 text-xs font-medium">Loading inventory...</div>
-      ) : (
-        <div className="w-full overflow-x-auto bg-white border border-slate-200 rounded-xl shadow-sm">
-          <table className="w-full text-left border-collapse">
-            <thead className="bg-slate-50 border-b border-slate-200">
-              <tr>
-                {['Medicine', 'Category', 'Unit', 'Stock', 'Reorder', 'Cost ₹', 'Selling ₹', 'Actions'].map(h => (
-                  <th key={h} className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.length === 0 && (
-                <tr>
-                  <td colSpan={8} className="px-6 py-12 text-center text-slate-500 text-sm">
-                    <Package size={32} className="mx-auto mb-3 opacity-30 text-slate-400" />
-                    No medicines found
-                  </td>
+      <div className="w-full overflow-x-auto bg-white border border-slate-200 rounded-xl shadow-sm">
+        <table className="w-full text-left border-collapse">
+          <thead className="bg-slate-50 border-b border-slate-200">
+            <tr>
+              {['Medicine', 'Category', 'Unit', 'Stock', 'Reorder', 'Cost ₹', 'Selling ₹', 'Actions'].map(h => (
+                <th key={h} className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              Array.from({ length: 5 }).map((_, i) => (
+                <tr key={i} className="animate-pulse border-b border-slate-100 last:border-none">
+                  <td className="px-6 py-4"><div className="w-40 h-4 bg-slate-150 rounded" /></td>
+                  <td className="px-6 py-4"><div className="w-16 h-4 bg-slate-150 rounded" /></td>
+                  <td className="px-6 py-4"><div className="w-12 h-4 bg-slate-150 rounded" /></td>
+                  <td className="px-6 py-4"><div className="w-10 h-4 bg-slate-150 rounded" /></td>
+                  <td className="px-6 py-4"><div className="w-10 h-4 bg-slate-150 rounded" /></td>
+                  <td className="px-6 py-4"><div className="w-12 h-4 bg-slate-150 rounded" /></td>
+                  <td className="px-6 py-4"><div className="w-12 h-4 bg-slate-150 rounded" /></td>
+                  <td className="px-6 py-4 text-center"><div className="w-16 h-6 bg-slate-150 rounded mx-auto" /></td>
                 </tr>
-              )}
-              {filtered.map(med => {
+              ))
+            ) : filtered.length === 0 ? (
+              <tr>
+                <td colSpan={8} className="px-6 py-12 text-center text-slate-500 text-sm">
+                  <Package size={32} className="mx-auto mb-3 opacity-30 text-slate-400" />
+                  No medicines found
+                </td>
+              </tr>
+            ) : (
+              filtered.map(med => {
                 const low = med.currentStock <= med.reorderLevel
                 return (
                   <tr key={med.id} className="hover:bg-slate-50/50 transition-colors border-b border-slate-100 last:border-none">
@@ -338,11 +349,10 @@ export default function InventoryPage() {
                     </td>
                   </tr>
                 )
-              })}
+              }))}
             </tbody>
           </table>
         </div>
-      )}
 
       {showModal && <MedModal med={modalMed} onClose={() => setShowModal(false)} onSave={load} />}
     </div>
